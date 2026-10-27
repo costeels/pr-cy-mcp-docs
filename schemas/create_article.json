@@ -1,0 +1,579 @@
+{
+  "name": "create_article",
+  "description": "Create an article with a name and optional initial blocks.",
+  "inputSchema": {
+    "$defs": {
+      "CodeBlock": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "type": {
+            "const": "code",
+            "default": "code",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/$defs/CodeData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "CodeData": {
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "type": "object"
+      },
+      "DelimiterBlock": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "type": {
+            "const": "delimiter",
+            "default": "delimiter",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/$defs/DelimiterData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "DelimiterData": {
+        "properties": {},
+        "type": "object"
+      },
+      "HeaderBlock": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "type": {
+            "const": "header",
+            "default": "header",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/$defs/HeaderData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "HeaderData": {
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "level": {
+            "maximum": 6,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "text",
+          "level"
+        ],
+        "type": "object"
+      },
+      "ImageBlock": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "type": {
+            "const": "image",
+            "default": "image",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/$defs/ImageData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "ImageData": {
+        "properties": {
+          "file": {
+            "$ref": "#/$defs/ImageFile"
+          },
+          "caption": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "withBorder": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "stretched": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "withBackground": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "type": "object"
+      },
+      "ImageFile": {
+        "properties": {
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "type": "object"
+      },
+      "ListBlock": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "type": {
+            "const": "list",
+            "default": "list",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/$defs/ListData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "ListData": {
+        "properties": {
+          "style": {
+            "enum": [
+              "ordered",
+              "unordered"
+            ],
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/ListItem"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "style",
+          "items"
+        ],
+        "type": "object"
+      },
+      "ListItem": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "items": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/$defs/ListItem"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "content"
+        ],
+        "type": "object"
+      },
+      "ParagraphBlock": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "type": {
+            "const": "paragraph",
+            "default": "paragraph",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/$defs/ParagraphData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "ParagraphData": {
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      },
+      "QuoteBlock": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "type": {
+            "const": "quote",
+            "default": "quote",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/$defs/QuoteData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "QuoteData": {
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "caption": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "alignment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      },
+      "TableBlock": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "type": {
+            "const": "table",
+            "default": "table",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/$defs/TableData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "TableData": {
+        "properties": {
+          "withHeadings": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "content": {
+            "items": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "content"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "name": {
+        "maxLength": 255,
+        "minLength": 1,
+        "type": "string"
+      },
+      "body": {
+        "anyOf": [
+          {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "code": "#/$defs/CodeBlock",
+                  "delimiter": "#/$defs/DelimiterBlock",
+                  "header": "#/$defs/HeaderBlock",
+                  "image": "#/$defs/ImageBlock",
+                  "list": "#/$defs/ListBlock",
+                  "paragraph": "#/$defs/ParagraphBlock",
+                  "quote": "#/$defs/QuoteBlock",
+                  "table": "#/$defs/TableBlock"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/ParagraphBlock"
+                },
+                {
+                  "$ref": "#/$defs/HeaderBlock"
+                },
+                {
+                  "$ref": "#/$defs/ListBlock"
+                },
+                {
+                  "$ref": "#/$defs/ImageBlock"
+                },
+                {
+                  "$ref": "#/$defs/QuoteBlock"
+                },
+                {
+                  "$ref": "#/$defs/CodeBlock"
+                },
+                {
+                  "$ref": "#/$defs/DelimiterBlock"
+                },
+                {
+                  "$ref": "#/$defs/TableBlock"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "body": {
+        "anyOf": [
+          {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "extraData": {
+        "anyOf": [
+          {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "dateCreated": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "dateUpdated": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "hasInvites": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "id",
+      "name"
+    ],
+    "type": "object"
+  }
+}

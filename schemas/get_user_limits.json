@@ -1,0 +1,108 @@
+{
+  "name": "get_user_limits",
+  "description": "Retrieve selected limits for the connected PR-CY account or project.",
+  "inputSchema": {
+    "$defs": {
+      "LimitName": {
+        "enum": [
+          "checks",
+          "competitorsAnalysis",
+          "forceCrawlerUpdates",
+          "pdfReports",
+          "projects",
+          "projectsDaily",
+          "standardAnalysis",
+          "teams"
+        ],
+        "type": "string"
+      }
+    },
+    "properties": {
+      "limits_filter": {
+        "default": [
+          "checks",
+          "competitorsAnalysis",
+          "forceCrawlerUpdates",
+          "pdfReports",
+          "projects",
+          "projectsDaily",
+          "standardAnalysis",
+          "teams"
+        ],
+        "items": {
+          "$ref": "#/$defs/LimitName"
+        },
+        "type": "array"
+      },
+      "project_id": {
+        "anyOf": [
+          {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "LimitName": {
+        "enum": [
+          "checks",
+          "competitorsAnalysis",
+          "forceCrawlerUpdates",
+          "pdfReports",
+          "projects",
+          "projectsDaily",
+          "standardAnalysis",
+          "teams"
+        ],
+        "type": "string"
+      },
+      "UserLimit": {
+        "properties": {
+          "limit_name": {
+            "$ref": "#/$defs/LimitName"
+          },
+          "available_amount": {
+            "type": "number"
+          },
+          "used_amount": {
+            "type": "number"
+          },
+          "expiration_period": {
+            "enum": [
+              "day",
+              "month",
+              null
+            ]
+          }
+        },
+        "required": [
+          "limit_name",
+          "available_amount",
+          "used_amount",
+          "expiration_period"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "result": {
+        "items": {
+          "$ref": "#/$defs/UserLimit"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "result"
+    ],
+    "type": "object"
+  }
+}

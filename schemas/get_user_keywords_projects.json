@@ -1,0 +1,139 @@
+{
+  "name": "get_user_keywords_projects",
+  "description": "List keyword-ranking projects and their search-engine, language, region and device settings.",
+  "inputSchema": {
+    "properties": {
+      "project_id": {
+        "anyOf": [
+          {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "KeywordsProject": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "hold",
+              "deleted"
+            ],
+            "type": "string"
+          },
+          "wordstat_type": {
+            "enum": [
+              "general",
+              "quoted",
+              "exact"
+            ],
+            "type": "string"
+          },
+          "date_created": {
+            "type": "string"
+          },
+          "search_options": {
+            "items": {
+              "$ref": "#/$defs/SearchOption"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "domain",
+          "status",
+          "wordstat_type",
+          "date_created"
+        ],
+        "type": "object"
+      },
+      "SearchOption": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "search_engine": {
+            "enum": [
+              "google",
+              "yandex",
+              "yandexLive"
+            ],
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "device": {
+            "enum": [
+              "desktop",
+              "mobile",
+              "tablet"
+            ],
+            "type": "string"
+          },
+          "date_created": {
+            "type": "string"
+          },
+          "top": {
+            "enum": [
+              10,
+              20,
+              30,
+              50,
+              100
+            ],
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "search_engine",
+          "language",
+          "device",
+          "date_created",
+          "top"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "result": {
+        "items": {
+          "$ref": "#/$defs/KeywordsProject"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "result"
+    ],
+    "type": "object"
+  }
+}

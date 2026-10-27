@@ -1,0 +1,31 @@
+{
+  "name": "delete_keyword_group",
+  "description": "Delete a keyword group by its group ID.",
+  "inputSchema": {
+    "properties": {
+      "group_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "group_id"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "properties": {
+      "status": {
+        "enum": [
+          "success",
+          "error"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "status"
+    ],
+    "type": "object"
+  }
+}

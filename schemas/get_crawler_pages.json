@@ -1,0 +1,479 @@
+{
+  "name": "get_crawler_pages",
+  "description": "List audited website pages with full page checks and combined issue filters.",
+  "inputSchema": {
+    "properties": {
+      "domain": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "url_contains": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "status_code": {
+        "anyOf": [
+          {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "title_contains": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "title_equals": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "title_types": {
+        "anyOf": [
+          {
+            "items": {
+              "enum": [
+                "none",
+                "short",
+                "long",
+                "normal"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "duplicated_title": {
+        "default": false,
+        "type": "boolean"
+      },
+      "description_contains": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "description_equals": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "description_types": {
+        "anyOf": [
+          {
+            "items": {
+              "enum": [
+                "none",
+                "short",
+                "long",
+                "normal"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "duplicated_description": {
+        "default": false,
+        "type": "boolean"
+      },
+      "h1_contains": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "h1_equals": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "h1_types": {
+        "anyOf": [
+          {
+            "items": {
+              "enum": [
+                "none",
+                "tooMany",
+                "normal"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "duplicated_h1": {
+        "default": false,
+        "type": "boolean"
+      },
+      "h1_equals_title": {
+        "default": false,
+        "type": "boolean"
+      },
+      "canonical_status": {
+        "anyOf": [
+          {
+            "enum": [
+              "canonical",
+              "notCanonical",
+              "absentCanonical",
+              "error"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "canonical_error_group": {
+        "anyOf": [
+          {
+            "enum": [
+              "all",
+              "multipleLinks",
+              "notAbsoluteLink",
+              "otherDomainLink",
+              "mismatchedLinks",
+              "insecureLink"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "links_count_errors": {
+        "anyOf": [
+          {
+            "items": {
+              "enum": [
+                "internal",
+                "external",
+                "normal"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "charset_types": {
+        "anyOf": [
+          {
+            "items": {
+              "enum": [
+                "success",
+                "info",
+                "error"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "no_index": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "no_follow": {
+        "default": false,
+        "type": "boolean"
+      },
+      "slow_page": {
+        "default": false,
+        "type": "boolean"
+      },
+      "slow_ttfb": {
+        "default": false,
+        "type": "boolean"
+      },
+      "heavy_html": {
+        "default": false,
+        "type": "boolean"
+      },
+      "short_text": {
+        "default": false,
+        "type": "boolean"
+      },
+      "meta_refresh_found": {
+        "default": false,
+        "type": "boolean"
+      },
+      "redirect_is_insecure": {
+        "default": false,
+        "type": "boolean"
+      },
+      "insecure_links": {
+        "default": false,
+        "type": "boolean"
+      },
+      "absent_images_alt": {
+        "default": false,
+        "type": "boolean"
+      },
+      "links_with_double_slash": {
+        "default": false,
+        "type": "boolean"
+      },
+      "external_links_with_empty_anchor": {
+        "default": false,
+        "type": "boolean"
+      },
+      "internal_links_with_empty_anchor": {
+        "default": false,
+        "type": "boolean"
+      },
+      "links_without_href": {
+        "default": false,
+        "type": "boolean"
+      },
+      "has_broken_links": {
+        "default": false,
+        "type": "boolean"
+      },
+      "og_basic_not_filled": {
+        "default": false,
+        "type": "boolean"
+      },
+      "og_not_canonical": {
+        "default": false,
+        "type": "boolean"
+      },
+      "twitter_card_not_filled": {
+        "default": false,
+        "type": "boolean"
+      },
+      "sort": {
+        "anyOf": [
+          {
+            "enum": [
+              "loadTime",
+              "-loadTime",
+              "ttfb",
+              "-ttfb",
+              "htmlSize",
+              "-htmlSize",
+              "h1Count",
+              "-h1Count",
+              "title",
+              "-title",
+              "textLength",
+              "-textLength",
+              "internalLinksCount",
+              "-internalLinksCount",
+              "externalLinksCount",
+              "-externalLinksCount",
+              "insecureLinksCount",
+              "-insecureLinksCount"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "limit": {
+        "default": 20,
+        "maximum": 100,
+        "minimum": 1,
+        "type": "integer"
+      },
+      "offset": {
+        "default": 0,
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "domain"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "CrawlerPage": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "updated": {
+            "type": "string"
+          },
+          "link_level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "src_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "src_link_data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "status_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "load_time": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "result": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "updated",
+          "result"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "pages": {
+        "items": {
+          "$ref": "#/$defs/CrawlerPage"
+        },
+        "type": "array"
+      },
+      "total_pages_count": {
+        "type": "integer"
+      },
+      "has_more": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "pages",
+      "total_pages_count",
+      "has_more"
+    ],
+    "type": "object"
+  }
+}

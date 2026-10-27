@@ -1,0 +1,96 @@
+{
+  "name": "get_project_notes",
+  "description": "Retrieve user-created project notes for an inclusive date range.",
+  "inputSchema": {
+    "properties": {
+      "project_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "date_from": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "date_to": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "limit": {
+        "default": 50,
+        "maximum": 500,
+        "minimum": 1,
+        "type": "integer"
+      },
+      "offset": {
+        "default": 0,
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "project_id"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "ProjectNote": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "text",
+          "date"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "notes": {
+        "items": {
+          "$ref": "#/$defs/ProjectNote"
+        },
+        "type": "array"
+      },
+      "total": {
+        "type": "integer"
+      },
+      "has_more": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "notes",
+      "total",
+      "has_more"
+    ],
+    "type": "object"
+  }
+}

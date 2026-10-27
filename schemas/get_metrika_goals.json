@@ -1,0 +1,24 @@
+{
+  "name": "get_metrika_goals",
+  "description": "List goals from the project's connected Yandex Metrika counter.",
+  "inputSchema": {
+    "properties": {
+      "project_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "use_deleted": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "project_id"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "additionalProperties": true,
+    "type": "object"
+  }
+}

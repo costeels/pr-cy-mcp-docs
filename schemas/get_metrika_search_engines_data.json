@@ -1,0 +1,65 @@
+{
+  "name": "get_metrika_search_engines_data",
+  "description": "Retrieve search-engine sessions and users from Yandex Metrika with optional visitor filters.",
+  "inputSchema": {
+    "properties": {
+      "project_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "exclude_robots": {
+        "default": false,
+        "type": "boolean"
+      },
+      "new_users_only": {
+        "default": false,
+        "type": "boolean"
+      },
+      "date_from": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "date_to": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "sort": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 5,
+        "minItems": 0,
+        "type": "array"
+      },
+      "limit": {
+        "default": 100,
+        "exclusiveMinimum": 0,
+        "maximum": 1000,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "project_id"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "additionalProperties": true,
+    "type": "object"
+  }
+}

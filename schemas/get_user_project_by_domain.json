@@ -1,0 +1,300 @@
+{
+  "name": "get_user_project_by_domain",
+  "description": "Retrieve a PR-CY project by its domain.",
+  "inputSchema": {
+    "properties": {
+      "domain": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "domain"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "TimelineEventName": {
+        "enum": [
+          "crawlerPagesChanged:canonicalFromHeader",
+          "crawlerPagesChanged:canonicalFromHtml",
+          "crawlerPagesChanged:description",
+          "crawlerPagesChanged:h1Content",
+          "crawlerPagesChanged:textLength",
+          "crawlerPagesChanged:noIndexHttp",
+          "crawlerPagesChanged:noIndexMeta",
+          "crawlerPagesChanged:noIndexRobots",
+          "crawlerPagesChanged:statusCode",
+          "expiration:future",
+          "expiration:past",
+          "expiration:soon",
+          "ga:connected",
+          "ga:disconnected",
+          "googleSafeBrowsing:no",
+          "googleSafeBrowsing:yes",
+          "gsc:connected",
+          "gsc:disconnected",
+          "note:created",
+          "pageSpeedConfigureViewport:no",
+          "pageSpeedConfigureViewport:yes",
+          "roskomnadzor:domainForbidden",
+          "roskomnadzor:domainPardoned",
+          "sitemap:exist",
+          "sitemap:notExist",
+          "todo:checked",
+          "todo:unchecked",
+          "webmaster:connected",
+          "webmaster:disconnected",
+          "weekReportStats:ga",
+          "wwwRedirect:exist",
+          "wwwRedirect:notExist",
+          "yandexIndex:indexed",
+          "yandexIndex:notIndexed",
+          "yandexSafeBrowsing:no",
+          "yandexSafeBrowsing:yes",
+          "crawlerPagesChanged:title",
+          "googleIndex:indexed",
+          "googleIndex:notIndexed",
+          "metrika:connected",
+          "metrika:disconnected",
+          "robotsTxt:allowed",
+          "robotsTxt:change",
+          "robotsTxt:disallowed",
+          "robotsTxt:exist",
+          "robotsTxt:notExist",
+          "ssl:exist",
+          "ssl:expired",
+          "ssl:notExist",
+          "ssl:renewed",
+          "ssl:soon_expire",
+          "yandexSqi:decreased",
+          "yandexSqi:increased",
+          "googleGlue:glued",
+          "googleGlue:notGlued",
+          "googleNews:exist",
+          "googleNews:notExist",
+          "httpStatusCode:siteRecovered",
+          "httpStatusCode:siteSick",
+          "keywordsGroupInTop10:decreased",
+          "keywordsGroupInTop10:increased",
+          "keywordsHistoryImport:done",
+          "keywordsInTop10:decreased",
+          "keywordsInTop10:increased",
+          "llmsTxt:exist",
+          "mailruCatalog:exist",
+          "mailruCatalog:notExist",
+          "organicSummary:changed",
+          "organicTopPages:clicksDecreased",
+          "organicTopPages:clicksIncreased",
+          "webArchive:exist",
+          "webmasterProblems:added",
+          "webmasterProblems:deleted",
+          "webmasterSearchablePagesCount:decreased",
+          "webmasterSearchablePagesCount:increased",
+          "weekReportStats:metrika",
+          "yandexAgs:sanctionsImposed",
+          "yandexAgs:sanctionsRemoved",
+          "yandexCatalog:exist",
+          "yandexCatalog:notExist",
+          "yandexGlue:glued",
+          "yandexGlue:notGlued"
+        ],
+        "type": "string"
+      }
+    },
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "domain": {
+        "type": "string"
+      },
+      "status": {
+        "enum": [
+          "active",
+          "hold",
+          "deleted"
+        ],
+        "type": "string"
+      },
+      "initialized_advanced": {
+        "type": "boolean"
+      },
+      "initialized_crawler": {
+        "type": "boolean"
+      },
+      "initialized_keywords": {
+        "type": "boolean"
+      },
+      "advanced_auto_update": {
+        "type": "boolean"
+      },
+      "crawler_auto_update": {
+        "type": "boolean"
+      },
+      "week_report": {
+        "type": "boolean"
+      },
+      "requests_per_second": {
+        "minimum": 1,
+        "type": "integer"
+      },
+      "use_robots_txt": {
+        "type": "boolean"
+      },
+      "crawler_mode": {
+        "items": {
+          "enum": [
+            "crawler",
+            "sitemap",
+            "userLinks"
+          ],
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "crawler_user_links": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "robot_type": {
+        "enum": [
+          "*",
+          "Googlebot",
+          "Yandex",
+          "PR-CY-BOT"
+        ],
+        "type": "string"
+      },
+      "crawler_restrict_rules": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "allow_subdomains_in_serp": {
+        "type": "boolean"
+      },
+      "ignore_wordstat_region": {
+        "type": "boolean"
+      },
+      "wordstat_type": {
+        "enum": [
+          "general",
+          "quoted",
+          "exact"
+        ],
+        "type": "string"
+      },
+      "date_created": {
+        "type": "string"
+      },
+      "ga_connected": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "gsc_connected": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "metrika_connected": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "webmaster_connected": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "enabled_timeline_events": {
+        "anyOf": [
+          {
+            "items": {
+              "$ref": "#/$defs/TimelineEventName"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "additional_timeline_events_emails": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "base_analytic_system": {
+        "enum": [
+          "ga",
+          "gsc",
+          "metrika",
+          "webmaster"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "domain",
+      "status",
+      "initialized_advanced",
+      "initialized_crawler",
+      "initialized_keywords",
+      "advanced_auto_update",
+      "crawler_auto_update",
+      "week_report",
+      "requests_per_second",
+      "use_robots_txt",
+      "crawler_mode",
+      "crawler_user_links",
+      "robot_type",
+      "crawler_restrict_rules",
+      "allow_subdomains_in_serp",
+      "ignore_wordstat_region",
+      "wordstat_type",
+      "date_created",
+      "ga_connected",
+      "gsc_connected",
+      "metrika_connected",
+      "webmaster_connected",
+      "enabled_timeline_events",
+      "additional_timeline_events_emails",
+      "base_analytic_system"
+    ],
+    "type": "object"
+  }
+}

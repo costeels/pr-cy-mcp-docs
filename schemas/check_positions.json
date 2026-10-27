@@ -1,0 +1,43 @@
+{
+  "name": "check_positions",
+  "description": "Launch a project keyword-ranking check for one or all active search settings.",
+  "inputSchema": {
+    "properties": {
+      "project_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "search_options_id": {
+        "anyOf": [
+          {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "project_id"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "properties": {
+      "status": {
+        "enum": [
+          "success",
+          "error"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "status"
+    ],
+    "type": "object"
+  }
+}

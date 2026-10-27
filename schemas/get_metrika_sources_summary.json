@@ -1,0 +1,57 @@
+{
+  "name": "get_metrika_sources_summary",
+  "description": "Retrieve a Yandex Metrika traffic-source summary.",
+  "inputSchema": {
+    "properties": {
+      "project_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "date_from": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "date_to": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "sort": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 5,
+        "minItems": 0,
+        "type": "array"
+      },
+      "limit": {
+        "default": 100,
+        "exclusiveMinimum": 0,
+        "maximum": 1000,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "project_id"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "additionalProperties": true,
+    "type": "object"
+  }
+}

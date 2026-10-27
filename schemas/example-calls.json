@@ -1,0 +1,607 @@
+[
+  {
+    "name": "check_positions",
+    "arguments": {
+      "project_id": 123,
+      "search_options_id": 456
+    }
+  },
+  {
+    "name": "count_article_blocks",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "search": [
+        "laptop"
+      ]
+    }
+  },
+  {
+    "name": "create_article",
+    "arguments": {
+      "name": "Laptop buying guide"
+    }
+  },
+  {
+    "name": "create_artifact",
+    "arguments": {
+      "type": "html",
+      "title": "SEO report",
+      "content": "<!doctype html><html lang=\"en\"><head><title>SEO report</title></head><body><h1>SEO report</h1></body></html>"
+    }
+  },
+  {
+    "name": "create_keyword_group",
+    "arguments": {
+      "project_id": 123,
+      "name": "Laptops"
+    }
+  },
+  {
+    "name": "create_keywords",
+    "arguments": {
+      "project_id": 123,
+      "keywords": [
+        {
+          "keyword": "buy laptop",
+          "target_url": "https://example.com/laptops/",
+          "group_ids": [
+            456
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "create_project_note",
+    "arguments": {
+      "project_id": 123,
+      "name": "Updated category titles",
+      "note_date": "2026-10-20",
+      "text": "Updated title tags on laptop category pages."
+    }
+  },
+  {
+    "name": "delete_article",
+    "arguments": {
+      "article_id": "ARTICLE_ID"
+    }
+  },
+  {
+    "name": "delete_keyword_group",
+    "arguments": {
+      "group_id": 456
+    }
+  },
+  {
+    "name": "delete_keywords",
+    "arguments": {
+      "keyword_ids": [
+        123,
+        124
+      ]
+    }
+  },
+  {
+    "name": "diff_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "from_revision_id": 456,
+      "to_revision_id": 457
+    }
+  },
+  {
+    "name": "finalize_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "revision_id": 456,
+      "message": "Publish the completed SEO report"
+    }
+  },
+  {
+    "name": "generate_image",
+    "arguments": {
+      "prompt": "A clean editorial illustration of a laptop on a desk.",
+      "aspect_ratio": "16:9",
+      "model": "auto"
+    }
+  },
+  {
+    "name": "get_article",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "include_block_data": true
+    }
+  },
+  {
+    "name": "get_article_blocks",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "search": [
+        "laptop"
+      ],
+      "blocks_before": 1,
+      "blocks_after": 1
+    }
+  },
+  {
+    "name": "get_changed_crawler_pages",
+    "arguments": {
+      "domain": "example.com",
+      "field": "title",
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20
+    }
+  },
+  {
+    "name": "get_crawler_analysis_summary",
+    "arguments": {
+      "domain": "example.com",
+      "history": "none"
+    }
+  },
+  {
+    "name": "get_crawler_pages",
+    "arguments": {
+      "domain": "example.com",
+      "duplicated_title": true,
+      "limit": 20,
+      "offset": 0
+    }
+  },
+  {
+    "name": "get_keywords",
+    "arguments": {
+      "project_id": 123,
+      "limit": 20,
+      "offset": 0
+    }
+  },
+  {
+    "name": "get_keywords_by_url",
+    "arguments": {
+      "page_url": "https://example.com/laptops/",
+      "per_page": 20
+    }
+  },
+  {
+    "name": "get_keywords_pages_summary",
+    "arguments": {
+      "project_id": 123,
+      "source": "gsc",
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20
+    }
+  },
+  {
+    "name": "get_keywords_positions_history",
+    "arguments": {
+      "search_options_id": 456,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20
+    }
+  },
+  {
+    "name": "get_keywords_summaries",
+    "arguments": {
+      "project_id": 123,
+      "search_options_id": 456,
+      "limit": 20,
+      "offset": 0
+    }
+  },
+  {
+    "name": "get_metrika_conversion_rate_by_source_and_landing",
+    "arguments": {
+      "project_id": 123,
+      "goal_id": 456,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  },
+  {
+    "name": "get_metrika_custom_query",
+    "arguments": {
+      "project_id": 123,
+      "metrics": [
+        "ym:s:visits",
+        "ym:s:users"
+      ],
+      "dimensions": [
+        "ym:s:startURL"
+      ],
+      "filters": "ym:s:trafficSource=='organic'",
+      "sort": [
+        "-ym:s:visits"
+      ],
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20,
+      "offset": 1
+    }
+  },
+  {
+    "name": "get_metrika_data_by_time",
+    "arguments": {
+      "project_id": 123,
+      "metrics": [
+        "ym:s:visits"
+      ],
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  },
+  {
+    "name": "get_metrika_geographical_organic_traffic",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  },
+  {
+    "name": "get_metrika_goals",
+    "arguments": {
+      "project_id": 123
+    }
+  },
+  {
+    "name": "get_metrika_goals_conversion",
+    "arguments": {
+      "project_id": 123,
+      "goal_ids": [
+        456
+      ],
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  },
+  {
+    "name": "get_metrika_mobile_vs_desktop",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  },
+  {
+    "name": "get_metrika_page_depth_analysis",
+    "arguments": {
+      "project_id": 123,
+      "min_pages": 3,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  },
+  {
+    "name": "get_metrika_pages_report",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20
+    }
+  },
+  {
+    "name": "get_metrika_search_engines_data",
+    "arguments": {
+      "project_id": 123,
+      "exclude_robots": true,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  },
+  {
+    "name": "get_metrika_sources_summary",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20
+    }
+  },
+  {
+    "name": "get_metrika_visits",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  },
+  {
+    "name": "get_page_content",
+    "arguments": {
+      "page_url": "https://example.com/",
+      "format": "structure"
+    }
+  },
+  {
+    "name": "get_page_screenshot",
+    "arguments": {
+      "page_url": "https://example.com/",
+      "device_type": "desktop",
+      "full_page": true
+    }
+  },
+  {
+    "name": "get_pages_summary",
+    "arguments": {
+      "project_id": 123,
+      "source": "gsc",
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "url": {
+        "value": "/blog/",
+        "compare_type": "contains"
+      },
+      "limit": 20
+    }
+  },
+  {
+    "name": "get_pages_summary_by_dates",
+    "arguments": {
+      "project_id": 123,
+      "period": "day",
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  },
+  {
+    "name": "get_position",
+    "arguments": {
+      "keywords": "buy laptop, gaming laptop",
+      "domain": "example.com",
+      "engine": "google",
+      "device": "desktop",
+      "top": 100
+    }
+  },
+  {
+    "name": "get_project_events",
+    "arguments": {
+      "domain": "example.com",
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-21",
+      "limit": 20,
+      "offset": 0
+    }
+  },
+  {
+    "name": "get_project_keyword_groups",
+    "arguments": {
+      "project_id": 123
+    }
+  },
+  {
+    "name": "get_project_notes",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20,
+      "offset": 0
+    }
+  },
+  {
+    "name": "get_region",
+    "arguments": {
+      "engine": "yandexLive",
+      "region": "Moscow"
+    }
+  },
+  {
+    "name": "get_serp",
+    "arguments": {
+      "keyword": "buy laptop",
+      "engine": "google",
+      "device": "desktop",
+      "top": 10
+    }
+  },
+  {
+    "name": "get_user_keywords_projects",
+    "arguments": {}
+  },
+  {
+    "name": "get_user_limits",
+    "arguments": {
+      "limits_filter": [
+        "checks",
+        "standardAnalysis"
+      ]
+    }
+  },
+  {
+    "name": "get_user_project",
+    "arguments": {
+      "project_id": 123
+    }
+  },
+  {
+    "name": "get_user_project_by_domain",
+    "arguments": {
+      "domain": "example.com"
+    }
+  },
+  {
+    "name": "get_user_projects",
+    "arguments": {}
+  },
+  {
+    "name": "get_wordstat",
+    "arguments": {
+      "keywords": "buy laptop, gaming laptop",
+      "types": [
+        "general",
+        "exact"
+      ],
+      "regions": [
+        213
+      ],
+      "need_related_phrases": true
+    }
+  },
+  {
+    "name": "list_articles",
+    "arguments": {
+      "limit": 10,
+      "offset": 0,
+      "sort": "-dateUpdated"
+    }
+  },
+  {
+    "name": "list_artifact_revisions",
+    "arguments": {
+      "artifact_id": 123
+    }
+  },
+  {
+    "name": "list_artifacts",
+    "arguments": {
+      "limit": 10,
+      "offset": 0
+    }
+  },
+  {
+    "name": "modify_article_blocks",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "operations": [
+        {
+          "action": "insert",
+          "afterBlockId": null,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "data": {
+                "text": "A laptop buying guide."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "overwrite_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "revision_id": 456,
+      "content": "<h1>Updated SEO report</h1>"
+    }
+  },
+  {
+    "name": "read_artifact",
+    "arguments": {
+      "artifact_id": 123
+    }
+  },
+  {
+    "name": "replace_article_text",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "search": "notebook",
+      "replace": "laptop",
+      "replace_all": true
+    }
+  },
+  {
+    "name": "replace_range_in_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "revision_id": 456,
+      "start": 0,
+      "length": 0,
+      "replacement": "<!-- Updated report -->"
+    }
+  },
+  {
+    "name": "replace_substring_in_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "revision_id": 456,
+      "search": "SEO report",
+      "replace": "Updated SEO report"
+    }
+  },
+  {
+    "name": "revert_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "to_revision_id": 456,
+      "revision_id": 457
+    }
+  },
+  {
+    "name": "search_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "search": "SEO report"
+    }
+  },
+  {
+    "name": "set_article_content",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "body": [
+        {
+          "type": "paragraph",
+          "data": {
+            "text": "Updated guide."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "set_artifact_persistent",
+    "arguments": {
+      "artifact_id": 123,
+      "version": 1,
+      "is_persistent": true
+    }
+  },
+  {
+    "name": "update_article_title",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "name": "Updated laptop buying guide"
+    }
+  },
+  {
+    "name": "update_group_keywords",
+    "arguments": {
+      "group_id": 456,
+      "keyword_ids": [
+        123,
+        124
+      ]
+    }
+  },
+  {
+    "name": "update_keywords_status",
+    "arguments": {
+      "keyword_ids": [
+        123,
+        124
+      ],
+      "status": "hold"
+    }
+  },
+  {
+    "name": "update_project_note",
+    "arguments": {
+      "note_id": 456,
+      "project_id": 123,
+      "text": "Updated title tags and checked the affected URLs."
+    }
+  },
+  {
+    "name": "validate_artifact",
+    "arguments": {
+      "artifact_id": 123
+    }
+  }
+]

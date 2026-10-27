@@ -1,0 +1,432 @@
+{
+  "name": "get_wordstat",
+  "description": "Retrieve estimated monthly keyword demand, related phrases, including phrases and optional seasonality across regions and accuracy types.",
+  "inputSchema": {
+    "$defs": {
+      "WordstatSeasonalityRequest": {
+        "properties": {
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "enum": [
+                  "desktop",
+                  "mobile"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "keywords": {
+        "type": "string"
+      },
+      "types": {
+        "anyOf": [
+          {
+            "items": {
+              "enum": [
+                "general",
+                "quoted",
+                "exact"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "regions": {
+        "anyOf": [
+          {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "need_related_phrases": {
+        "default": true,
+        "type": "boolean"
+      },
+      "need_including_phrases": {
+        "default": true,
+        "type": "boolean"
+      },
+      "seasonality": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/WordstatSeasonalityRequest"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "type": {
+        "anyOf": [
+          {
+            "enum": [
+              "general",
+              "quoted",
+              "exact"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "region": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "keywords"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "RegionItem": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "engine": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "engine"
+        ],
+        "type": "object"
+      },
+      "WordstatItem": {
+        "properties": {
+          "keyword": {
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "$ref": "#/$defs/WordstatValue"
+            },
+            "type": "array"
+          },
+          "related_phrases": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/$defs/WordstatPhraseGroup"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "including_phrases": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/$defs/WordstatPhraseGroup"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "keyword",
+          "values"
+        ],
+        "type": "object"
+      },
+      "WordstatItemBase": {
+        "properties": {
+          "keyword": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "keyword",
+          "count"
+        ],
+        "type": "object"
+      },
+      "WordstatPhraseGroup": {
+        "properties": {
+          "type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "region_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "region_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "phrases": {
+            "items": {
+              "$ref": "#/$defs/WordstatItemBase"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "phrases"
+        ],
+        "type": "object"
+      },
+      "WordstatSeasonalityPoint": {
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "date",
+          "count"
+        ],
+        "type": "object"
+      },
+      "WordstatSeasonalitySeries": {
+        "properties": {
+          "keyword": {
+            "type": "string"
+          },
+          "region_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "region_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "data": {
+            "items": {
+              "$ref": "#/$defs/WordstatSeasonalityPoint"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "keyword",
+          "data"
+        ],
+        "type": "object"
+      },
+      "WordstatValue": {
+        "properties": {
+          "type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "region_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "region_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "count"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "task_id": {
+        "type": "string"
+      },
+      "regions": {
+        "items": {
+          "$ref": "#/$defs/RegionItem"
+        },
+        "type": "array"
+      },
+      "types": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "items": {
+        "items": {
+          "$ref": "#/$defs/WordstatItem"
+        },
+        "type": "array"
+      },
+      "seasonality": {
+        "anyOf": [
+          {
+            "items": {
+              "$ref": "#/$defs/WordstatSeasonalitySeries"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "seasonality_months": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "seasonality_device": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "task_id",
+      "regions",
+      "types",
+      "items"
+    ],
+    "type": "object"
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "name": "get_serp",
+  "description": "Retrieve search results for one keyword from Google or live Yandex search.",
+  "inputSchema": {
+    "properties": {
+      "keyword": {
+        "type": "string"
+      },
+      "engine": {
+        "default": "google",
+        "enum": [
+          "google",
+          "yandexLive"
+        ],
+        "type": "string"
+      },
+      "language": {
+        "const": "ru",
+        "default": "ru",
+        "type": "string"
+      },
+      "device": {
+        "default": "desktop",
+        "enum": [
+          "desktop",
+          "mobile"
+        ],
+        "type": "string"
+      },
+      "top": {
+        "default": 10,
+        "enum": [
+          10,
+          20,
+          50,
+          100
+        ],
+        "type": "integer"
+      },
+      "region": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "with_related_values": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "keyword"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "RelatedQuestion": {
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "snippet": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "type": "object"
+      },
+      "RelatedSearch": {
+        "properties": {},
+        "required": [
+          "title"
+        ],
+        "type": "object"
+      },
+      "SerpItem": {
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "snippet": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "title",
+          "snippet"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "task_id": {
+        "type": "string"
+      },
+      "serp": {
+        "items": {
+          "$ref": "#/$defs/SerpItem"
+        },
+        "type": "array"
+      },
+      "related_questions": {
+        "anyOf": [
+          {
+            "items": {
+              "$ref": "#/$defs/RelatedQuestion"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "related_searches": {
+        "anyOf": [
+          {
+            "items": {
+              "$ref": "#/$defs/RelatedSearch"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "task_id",
+      "serp"
+    ],
+    "type": "object"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "name": "update_project_note",
+  "description": "Update selected fields of a project note and return the updated note.",
+  "inputSchema": {
+    "properties": {
+      "note_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "project_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "name": {
+        "anyOf": [
+          {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "note_date": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "text": {
+        "anyOf": [
+          {
+            "maxLength": 20000,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "note_id",
+      "project_id"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "text": {
+        "type": "string"
+      },
+      "date": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "text",
+      "date"
+    ],
+    "type": "object"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "name": "generate_image",
+  "description": "Generate an image from a text prompt, optionally using reference-image URLs.",
+  "inputSchema": {
+    "properties": {
+      "prompt": {
+        "type": "string"
+      },
+      "aspect_ratio": {
+        "default": "1:1",
+        "enum": [
+          "1:1",
+          "9:16",
+          "16:9",
+          "3:4",
+          "4:3",
+          "2:3",
+          "3:2",
+          "4:5",
+          "5:4",
+          "21:9"
+        ],
+        "type": "string"
+      },
+      "model": {
+        "default": "auto",
+        "enum": [
+          "auto",
+          "gpt-image-2.5-flare",
+          "nano-banana-2.1",
+          "nano-banana-2",
+          "nano-banana-2-lite",
+          "nano-banana-pro",
+          "seedream/v4.5",
+          "flux-2",
+          "flux-3",
+          "recraft-v4",
+          "ideogram",
+          "schnell"
+        ],
+        "type": "string"
+      },
+      "reference_images": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "prompt"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "properties": {
+      "task_id": {
+        "type": "string"
+      },
+      "image_url": {
+        "type": "string"
+      },
+      "error_code": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "task_id",
+      "image_url"
+    ],
+    "type": "object"
+  }
+}

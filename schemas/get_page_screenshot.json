@@ -1,0 +1,61 @@
+{
+  "name": "get_page_screenshot",
+  "description": "Capture a public-page screenshot using a selected device type.",
+  "inputSchema": {
+    "properties": {
+      "page_url": {
+        "type": "string"
+      },
+      "full_page": {
+        "default": false,
+        "type": "boolean"
+      },
+      "device_type": {
+        "default": "tablet",
+        "enum": [
+          "smartphone",
+          "tablet",
+          "desktop"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "page_url"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "properties": {
+      "task_id": {
+        "type": "string"
+      },
+      "screenshot_url": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "page_url": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "task_id",
+      "screenshot_url",
+      "page_url"
+    ],
+    "type": "object"
+  }
+}

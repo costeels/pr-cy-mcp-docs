@@ -1,0 +1,43 @@
+{
+  "name": "update_keywords_status",
+  "description": "Set selected project keywords to active or hold.",
+  "inputSchema": {
+    "properties": {
+      "keyword_ids": {
+        "items": {
+          "type": "integer"
+        },
+        "maxItems": 500,
+        "minItems": 1,
+        "type": "array"
+      },
+      "status": {
+        "enum": [
+          "hold",
+          "active"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "keyword_ids",
+      "status"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "properties": {
+      "status": {
+        "enum": [
+          "success",
+          "error"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "status"
+    ],
+    "type": "object"
+  }
+}

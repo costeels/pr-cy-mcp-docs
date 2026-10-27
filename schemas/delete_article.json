@@ -1,0 +1,20 @@
+{
+  "name": "delete_article",
+  "description": "Delete an article identified by its article ID.",
+  "inputSchema": {
+    "properties": {
+      "article_id": {
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "required": [
+      "article_id"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "additionalProperties": true,
+    "type": "object"
+  }
+}

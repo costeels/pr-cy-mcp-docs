@@ -1,0 +1,97 @@
+{
+  "name": "get_metrika_custom_query",
+  "description": "Run a custom query against the connected Yandex Metrika reporting API using metrics, dimensions and filters.",
+  "inputSchema": {
+    "properties": {
+      "project_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "metrics": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 20,
+        "minItems": 1,
+        "type": "array"
+      },
+      "dimensions": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "date_from": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "date_to": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "filters": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "sort": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 5,
+        "minItems": 0,
+        "type": "array"
+      },
+      "limit": {
+        "default": 100,
+        "exclusiveMinimum": 0,
+        "maximum": 1000,
+        "type": "integer"
+      },
+      "offset": {
+        "default": 1,
+        "minimum": 1,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "project_id",
+      "metrics"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "additionalProperties": true,
+    "type": "object"
+  }
+}

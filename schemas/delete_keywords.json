@@ -1,0 +1,35 @@
+{
+  "name": "delete_keywords",
+  "description": "Delete selected keywords by their numeric keyword IDs.",
+  "inputSchema": {
+    "properties": {
+      "keyword_ids": {
+        "items": {
+          "type": "integer"
+        },
+        "maxItems": 500,
+        "minItems": 1,
+        "type": "array"
+      }
+    },
+    "required": [
+      "keyword_ids"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "properties": {
+      "status": {
+        "enum": [
+          "success",
+          "error"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "status"
+    ],
+    "type": "object"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "PR-CY MCP",
+  "description": "Hosted MCP server for SEO keyword research, search rankings, website audits, Google Search Console, Yandex Webmaster, Yandex Metrika, page content, articles and HTML artifacts.",
+  "folders": ["docs"],
+  "excludeFolders": ["schemas", "scripts", ".git", "node_modules"],
+  "excludeFiles": [],
+  "rules": [
+    "Discover the current PR-CY MCP tools before use; parameters may change between server versions.",
+    "Resolve project, search-option, keyword-group, goal, article and revision identifiers from tool responses before using them.",
+    "Batch keyword phrases in get_wordstat and get_position as a single comma-separated string.",
+    "Use format=structure in get_page_content when only metadata and headings are needed.",
+    "For article and artifact changes, use the user's requested scope and read the current blocks or revision first."
+  ]
+}

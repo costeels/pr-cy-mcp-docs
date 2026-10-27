@@ -1,0 +1,36 @@
+{
+  "name": "create_keyword_group",
+  "description": "Create a named keyword group in a project.",
+  "inputSchema": {
+    "properties": {
+      "project_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "name": {
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_id",
+      "name"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "name"
+    ],
+    "type": "object"
+  }
+}

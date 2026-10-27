@@ -1,0 +1,184 @@
+{
+  "name": "get_page_content",
+  "description": "Extract a public page as Markdown, HTML, or a compact metadata-and-headings structure.",
+  "inputSchema": {
+    "properties": {
+      "page_url": {
+        "type": "string"
+      },
+      "format": {
+        "default": "md",
+        "enum": [
+          "md",
+          "html",
+          "structure"
+        ],
+        "type": "string"
+      },
+      "delete_links": {
+        "default": false,
+        "type": "boolean"
+      },
+      "delete_images": {
+        "default": false,
+        "type": "boolean"
+      },
+      "length": {
+        "default": 0,
+        "type": "integer"
+      },
+      "headings_max_level": {
+        "default": 3,
+        "maximum": 6,
+        "minimum": 1,
+        "type": "integer"
+      },
+      "max_headings": {
+        "default": 200,
+        "maximum": 1000,
+        "minimum": 1,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "page_url"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "OutlineItem": {
+        "properties": {
+          "level": {
+            "type": "integer"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "level",
+          "text"
+        ],
+        "type": "object"
+      },
+      "PageStats": {
+        "properties": {
+          "char_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "images_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "internal_links_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "external_links_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object"
+      }
+    },
+    "properties": {
+      "task_id": {
+        "type": "string"
+      },
+      "text_in_markdown": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "html_code": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "meta": {
+        "anyOf": [
+          {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "outline": {
+        "anyOf": [
+          {
+            "items": {
+              "$ref": "#/$defs/OutlineItem"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "stats": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/PageStats"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "task_id"
+    ],
+    "type": "object"
+  }
+}

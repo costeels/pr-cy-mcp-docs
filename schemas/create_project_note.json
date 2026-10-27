@@ -1,0 +1,61 @@
+{
+  "name": "create_project_note",
+  "description": "Create a dated project note documenting work on a website.",
+  "inputSchema": {
+    "properties": {
+      "project_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "name": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "note_date": {
+        "type": "string"
+      },
+      "text": {
+        "anyOf": [
+          {
+            "maxLength": 20000,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "project_id",
+      "name",
+      "note_date"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "text": {
+        "type": "string"
+      },
+      "date": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "text",
+      "date"
+    ],
+    "type": "object"
+  }
+}

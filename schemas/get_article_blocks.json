@@ -1,0 +1,76 @@
+{
+  "name": "get_article_blocks",
+  "description": "Retrieve article blocks matching substring and block-type filters, with optional neighboring context.",
+  "inputSchema": {
+    "properties": {
+      "article_id": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "search": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "types": {
+        "anyOf": [
+          {
+            "items": {
+              "enum": [
+                "paragraph",
+                "header",
+                "list",
+                "image",
+                "quote",
+                "code",
+                "delimiter",
+                "table"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "variant": {
+        "default": "full",
+        "enum": [
+          "full",
+          "meta"
+        ],
+        "type": "string"
+      },
+      "blocks_before": {
+        "default": 0,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "blocks_after": {
+        "default": 0,
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "article_id"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "additionalProperties": true,
+    "type": "object"
+  }
+}

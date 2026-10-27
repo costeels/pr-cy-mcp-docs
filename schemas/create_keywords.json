@@ -1,0 +1,120 @@
+{
+  "name": "create_keywords",
+  "description": "Add a batch of keywords to a project, with optional target URLs and group assignments.",
+  "inputSchema": {
+    "$defs": {
+      "KeywordCreateItem": {
+        "properties": {
+          "keyword": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "target_url": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "group_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "keyword"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "project_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "keywords": {
+        "items": {
+          "$ref": "#/$defs/KeywordCreateItem"
+        },
+        "maxItems": 100,
+        "minItems": 1,
+        "type": "array"
+      }
+    },
+    "required": [
+      "project_id",
+      "keywords"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "Keyword": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "keyword": {
+            "type": "string"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/$defs/KeywordGroup"
+            },
+            "type": "array"
+          },
+          "target_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "id",
+          "keyword"
+        ],
+        "type": "object"
+      },
+      "KeywordGroup": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "result": {
+        "items": {
+          "$ref": "#/$defs/Keyword"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "result"
+    ],
+    "type": "object"
+  }
+}

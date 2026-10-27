@@ -1,0 +1,216 @@
+{
+  "name": "finalize_artifact",
+  "description": "Finalize the active artifact draft as the next version.",
+  "inputSchema": {
+    "properties": {
+      "artifact_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "revision_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "message": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "artifact_id",
+      "revision_id"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "Artifact": {
+        "properties": {
+          "artifact_id": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "type": {
+            "const": "html",
+            "type": "string"
+          },
+          "draft_revision_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "finalized_revision_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_created": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_updated": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "artifact_id",
+          "type"
+        ],
+        "type": "object"
+      },
+      "Revision": {
+        "properties": {
+          "revision_id": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "content_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "is_persistent": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "enum": [
+                  "assistant",
+                  "user"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_created": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_updated": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "revision_id"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "artifact": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "revision": {
+        "$ref": "#/$defs/Revision"
+      }
+    },
+    "required": [
+      "artifact",
+      "revision"
+    ],
+    "type": "object"
+  }
+}

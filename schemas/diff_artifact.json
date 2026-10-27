@@ -1,0 +1,161 @@
+{
+  "name": "diff_artifact",
+  "description": "Compare two artifact revisions using a unified diff.",
+  "inputSchema": {
+    "properties": {
+      "artifact_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "from_revision_id": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "to_revision_id": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "artifact_id",
+      "from_revision_id"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "Revision": {
+        "properties": {
+          "revision_id": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "content_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "is_persistent": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "enum": [
+                  "assistant",
+                  "user"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_created": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_updated": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "revision_id"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "from_revision": {
+        "$ref": "#/$defs/Revision"
+      },
+      "to_revision": {
+        "$ref": "#/$defs/Revision"
+      },
+      "is_equal": {
+        "type": "boolean"
+      },
+      "diff": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "from_revision",
+      "to_revision",
+      "is_equal",
+      "diff"
+    ],
+    "type": "object"
+  }
+}

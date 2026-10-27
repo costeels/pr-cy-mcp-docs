@@ -1,0 +1,154 @@
+{
+  "name": "modify_article_blocks",
+  "description": "Apply ordered insert, modify, remove and move operations to article blocks.",
+  "inputSchema": {
+    "$defs": {
+      "InsertBlockOperation": {
+        "properties": {
+          "action": {
+            "const": "insert",
+            "default": "insert",
+            "type": "string"
+          },
+          "afterBlockId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "blocks": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "blocks"
+        ],
+        "type": "object"
+      },
+      "ModifyBlockOperation": {
+        "properties": {
+          "action": {
+            "const": "modify",
+            "default": "modify",
+            "type": "string"
+          },
+          "blockId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "block": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "blockId",
+          "block"
+        ],
+        "type": "object"
+      },
+      "MoveBlockOperation": {
+        "properties": {
+          "action": {
+            "const": "move",
+            "default": "move",
+            "type": "string"
+          },
+          "blockId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "afterBlockId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "blockId"
+        ],
+        "type": "object"
+      },
+      "RemoveBlockOperation": {
+        "properties": {
+          "action": {
+            "const": "remove",
+            "default": "remove",
+            "type": "string"
+          },
+          "blockIds": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "blockIds"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "article_id": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "operations": {
+        "items": {
+          "discriminator": {
+            "mapping": {
+              "insert": "#/$defs/InsertBlockOperation",
+              "modify": "#/$defs/ModifyBlockOperation",
+              "move": "#/$defs/MoveBlockOperation",
+              "remove": "#/$defs/RemoveBlockOperation"
+            },
+            "propertyName": "action"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/InsertBlockOperation"
+            },
+            {
+              "$ref": "#/$defs/ModifyBlockOperation"
+            },
+            {
+              "$ref": "#/$defs/RemoveBlockOperation"
+            },
+            {
+              "$ref": "#/$defs/MoveBlockOperation"
+            }
+          ]
+        },
+        "minItems": 1,
+        "type": "array"
+      }
+    },
+    "required": [
+      "article_id",
+      "operations"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "additionalProperties": true,
+    "type": "object"
+  }
+}

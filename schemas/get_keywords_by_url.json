@@ -1,0 +1,83 @@
+{
+  "name": "get_keywords_by_url",
+  "description": "Retrieve keywords associated with a page URL.",
+  "inputSchema": {
+    "properties": {
+      "page_url": {
+        "type": "string"
+      },
+      "per_page": {
+        "default": 20,
+        "maximum": 1000,
+        "minimum": 1,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "page_url"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "OrganicKeywordsItem": {
+        "properties": {
+          "word": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "pos": {
+            "type": "integer"
+          },
+          "ws": {
+            "type": "integer"
+          },
+          "wsk": {
+            "type": "integer"
+          },
+          "serpf": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "word",
+          "url",
+          "pos",
+          "ws",
+          "wsk",
+          "serpf"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "task_id": {
+        "type": "string"
+      },
+      "organic_keywords_total": {
+        "type": "integer"
+      },
+      "organic_keywords": {
+        "anyOf": [
+          {
+            "items": {
+              "$ref": "#/$defs/OrganicKeywordsItem"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "task_id",
+      "organic_keywords_total",
+      "organic_keywords"
+    ],
+    "type": "object"
+  }
+}

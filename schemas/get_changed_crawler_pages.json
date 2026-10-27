@@ -1,0 +1,188 @@
+{
+  "name": "get_changed_crawler_pages",
+  "description": "Find audited pages whose selected tracked field changed during a date range.",
+  "inputSchema": {
+    "$defs": {
+      "CrawlerHistoryField": {
+        "enum": [
+          "statusCode",
+          "title",
+          "description",
+          "h1Content",
+          "textLength",
+          "noIndexRobots",
+          "noIndexHttp",
+          "noIndexMeta",
+          "canonicalFromHeader",
+          "canonicalFromHtml"
+        ],
+        "type": "string"
+      }
+    },
+    "properties": {
+      "domain": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "field": {
+        "$ref": "#/$defs/CrawlerHistoryField"
+      },
+      "value": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "date_from": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "date_to": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "limit": {
+        "default": 20,
+        "maximum": 100,
+        "minimum": 1,
+        "type": "integer"
+      },
+      "offset": {
+        "default": 0,
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "domain",
+      "field"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "CrawlerPage": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "updated": {
+            "type": "string"
+          },
+          "link_level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "src_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "src_link_data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "status_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "load_time": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "result": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "updated",
+          "result"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "pages": {
+        "items": {
+          "$ref": "#/$defs/CrawlerPage"
+        },
+        "type": "array"
+      },
+      "total_pages_count": {
+        "type": "integer"
+      },
+      "has_more": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "pages",
+      "total_pages_count",
+      "has_more"
+    ],
+    "type": "object"
+  }
+}

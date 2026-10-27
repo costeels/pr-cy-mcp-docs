@@ -1,0 +1,114 @@
+{
+  "name": "list_artifacts",
+  "description": "List HTML artifacts available to the connected user.",
+  "inputSchema": {
+    "properties": {
+      "limit": {
+        "default": 10,
+        "maximum": 100,
+        "minimum": 1,
+        "type": "integer"
+      },
+      "offset": {
+        "default": 0,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "sort": {
+        "default": "id",
+        "enum": [
+          "id",
+          "-id",
+          "title",
+          "-title"
+        ],
+        "type": "string"
+      }
+    },
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "Artifact": {
+        "properties": {
+          "artifact_id": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "type": {
+            "const": "html",
+            "type": "string"
+          },
+          "draft_revision_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "finalized_revision_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_created": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_updated": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "artifact_id",
+          "type"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "artifacts": {
+        "items": {
+          "$ref": "#/$defs/Artifact"
+        },
+        "type": "array"
+      },
+      "total": {
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "artifacts",
+      "total"
+    ],
+    "type": "object"
+  }
+}

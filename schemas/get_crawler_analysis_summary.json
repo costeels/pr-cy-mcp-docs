@@ -1,0 +1,1021 @@
+{
+  "name": "get_crawler_analysis_summary",
+  "description": "Retrieve the latest crawler-audit summary, health score, issue counts and optional history.",
+  "inputSchema": {
+    "properties": {
+      "domain": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "history": {
+        "default": "none",
+        "enum": [
+          "none",
+          "days",
+          "weeks",
+          "months"
+        ],
+        "type": "string"
+      },
+      "history_blocks": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "domain"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "BrokenLinksBlock": {
+        "properties": {
+          "pagesWithBrokenLinksCount": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CanonicalBlock": {
+        "properties": {
+          "canonical": {
+            "default": 0,
+            "type": "integer"
+          },
+          "notCanonical": {
+            "default": 0,
+            "type": "integer"
+          },
+          "absentCanonical": {
+            "default": 0,
+            "type": "integer"
+          },
+          "multipleLinks": {
+            "default": 0,
+            "type": "integer"
+          },
+          "notAbsoluteLink": {
+            "default": 0,
+            "type": "integer"
+          },
+          "otherDomainLink": {
+            "default": 0,
+            "type": "integer"
+          },
+          "mismatchedLinks": {
+            "default": 0,
+            "type": "integer"
+          },
+          "insecureLink": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CharsetBlock": {
+        "properties": {
+          "success": {
+            "default": 0,
+            "type": "integer"
+          },
+          "info": {
+            "default": 0,
+            "type": "integer"
+          },
+          "error": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CrawlerAnalysisResults": {
+        "properties": {
+          "health": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/HealthBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "statusCode": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/StatusCodeBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "titleDublicates": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/TitleDublicatesBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "descriptionDublicates": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/DescriptionDublicatesBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "h1": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/H1Block"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "h1Dublicates": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/H1DublicatesBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "h1EqualsTitle": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/H1EqualsTitleBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "canonical": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/CanonicalBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "noIndex": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/NoIndexBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "noFollow": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/NoFollowBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "loadTime": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/LoadTimeBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "ttfb": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/TtfbBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "htmlSize": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/HtmlSizeBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "pageText": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/PageTextBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "pageLinks": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/PageLinksBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "charset": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/CharsetBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "metaRefresh": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/MetaRefreshBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "insecureLinks": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/InsecureLinksBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "insecureRedirect": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/InsecureRedirectBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "absentImagesAlt": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/PagesWithEmptyImageAltBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "absentLinksAnchorsExternal": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ExternalEmptyAnchorBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "absentLinksAnchorsInternal": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/InternalEmptyAnchorBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "doubleSlashInLinks": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/DoubleSlashInLinksBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "linksWithoutHref": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/LinksWithoutHrefBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "brokenLinks": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/BrokenLinksBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "openGraphBasic": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/OpenGraphBasicBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "openGraphCanonicalUrl": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/OpenGraphCanonicalUrlBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "twitterCard": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/TwitterCardBlock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object"
+      },
+      "CrawlerHistorySeries": {
+        "properties": {
+          "days": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "type": "object"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "weeks": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "type": "object"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "months": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "type": "object"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object"
+      },
+      "DescriptionDublicate": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "description",
+          "count"
+        ],
+        "type": "object"
+      },
+      "DescriptionDublicatesBlock": {
+        "properties": {
+          "dublicates": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/DescriptionDublicate"
+            },
+            "type": "array"
+          },
+          "dublicatesCount": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "DoubleSlashInLinksBlock": {
+        "properties": {
+          "pagesWithDoubleSlashInLinks": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ExternalEmptyAnchorBlock": {
+        "properties": {
+          "pagesWithExternalLinkEmptyAnchor": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "H1Block": {
+        "properties": {
+          "none": {
+            "default": 0,
+            "type": "integer"
+          },
+          "normal": {
+            "default": 0,
+            "type": "integer"
+          },
+          "tooMany": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "H1Dublicate": {
+        "properties": {
+          "h1": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "h1",
+          "count"
+        ],
+        "type": "object"
+      },
+      "H1DublicatesBlock": {
+        "properties": {
+          "dublicates": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/H1Dublicate"
+            },
+            "type": "array"
+          },
+          "dublicatesCount": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "H1EqualsTitleBlock": {
+        "properties": {
+          "dublicates": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/TitleDublicate"
+            },
+            "type": "array"
+          },
+          "dublicatesCount": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "HealthBlock": {
+        "properties": {
+          "pagesWithErrorsCount": {
+            "default": 0,
+            "type": "integer"
+          },
+          "pagesWithWarningsCount": {
+            "default": 0,
+            "type": "integer"
+          },
+          "rank": {
+            "default": 0,
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "HtmlSizeBlock": {
+        "properties": {
+          "pagesWithHeavyHtml": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "InsecureLinksBlock": {
+        "properties": {
+          "pagesCount": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "InsecureRedirectBlock": {
+        "properties": {
+          "insecureRedirectsCount": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "InternalEmptyAnchorBlock": {
+        "properties": {
+          "pagesWithInternalLinkEmptyAnchor": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "LengthTypesBlock": {
+        "properties": {
+          "none": {
+            "default": 0,
+            "type": "integer"
+          },
+          "short": {
+            "default": 0,
+            "type": "integer"
+          },
+          "normal": {
+            "default": 0,
+            "type": "integer"
+          },
+          "long": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "LinksWithoutHrefBlock": {
+        "properties": {
+          "pagesWithLinksWithoutHref": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "LoadTimeBlock": {
+        "properties": {
+          "totalTime": {
+            "default": 0,
+            "type": "number"
+          },
+          "totalCount": {
+            "default": 0,
+            "type": "integer"
+          },
+          "longTimeCount": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "MetaRefreshBlock": {
+        "properties": {
+          "metaRefreshFound": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "NoFollowBlock": {
+        "properties": {
+          "noFollowCount": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "NoIndexBlock": {
+        "properties": {
+          "noIndexCount": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "OpenGraphBasicBlock": {
+        "properties": {
+          "pagesWithNoFilledOpenGraph": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "OpenGraphCanonicalUrlBlock": {
+        "properties": {
+          "pagesWithNotCanonicalOpenGraph": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PageLinksBlock": {
+        "properties": {
+          "internal": {
+            "default": 0,
+            "type": "integer"
+          },
+          "external": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PageTextBlock": {
+        "properties": {
+          "shortTextCount": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PagesWithEmptyImageAltBlock": {
+        "properties": {
+          "pagesWithEmptyImageAlt": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "StatusCodeBlock": {
+        "properties": {
+          "codes": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "default": {},
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "TitleDublicate": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "title",
+          "count"
+        ],
+        "type": "object"
+      },
+      "TitleDublicatesBlock": {
+        "properties": {
+          "dublicates": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/TitleDublicate"
+            },
+            "type": "array"
+          },
+          "dublicatesCount": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "TtfbBlock": {
+        "properties": {
+          "pagesWithSlowTtfb": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "TwitterCardBlock": {
+        "properties": {
+          "pagesWithoutFilledTwitterCard": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "domain": {
+        "type": "string"
+      },
+      "created": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "started": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "updated": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "modified": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "is_updating": {
+        "type": "boolean"
+      },
+      "is_expired": {
+        "type": "boolean"
+      },
+      "is_not_responding": {
+        "type": "boolean"
+      },
+      "pages_limit": {
+        "type": "integer"
+      },
+      "indexed_links_count": {
+        "type": "integer"
+      },
+      "failed_links_count": {
+        "type": "integer"
+      },
+      "new_links_count": {
+        "type": "integer"
+      },
+      "in_progress_links_count": {
+        "type": "integer"
+      },
+      "not_canonical_links_count": {
+        "type": "integer"
+      },
+      "use_robots_txt": {
+        "type": "boolean"
+      },
+      "robot_type": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "crawler_mode": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "used_sitemaps": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "crawler_user_links": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "results": {
+        "$ref": "#/$defs/CrawlerAnalysisResults"
+      },
+      "history": {
+        "anyOf": [
+          {
+            "additionalProperties": {
+              "additionalProperties": {
+                "$ref": "#/$defs/CrawlerHistorySeries"
+              },
+              "type": "object"
+            },
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "id",
+      "domain",
+      "is_updating",
+      "is_expired",
+      "is_not_responding",
+      "pages_limit",
+      "indexed_links_count",
+      "failed_links_count",
+      "new_links_count",
+      "in_progress_links_count",
+      "not_canonical_links_count",
+      "use_robots_txt",
+      "crawler_mode",
+      "results"
+    ],
+    "type": "object"
+  }
+}

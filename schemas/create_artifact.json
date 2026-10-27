@@ -1,0 +1,210 @@
+{
+  "name": "create_artifact",
+  "description": "Create an HTML artifact and its initial draft.",
+  "inputSchema": {
+    "properties": {
+      "type": {
+        "const": "html",
+        "default": "html",
+        "type": "string"
+      },
+      "content": {
+        "default": "",
+        "type": "string"
+      },
+      "created_by": {
+        "default": "assistant",
+        "enum": [
+          "assistant",
+          "user"
+        ],
+        "type": "string"
+      }
+    },
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "Artifact": {
+        "properties": {
+          "artifact_id": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "type": {
+            "const": "html",
+            "type": "string"
+          },
+          "draft_revision_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "finalized_revision_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_created": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_updated": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "artifact_id",
+          "type"
+        ],
+        "type": "object"
+      },
+      "Revision": {
+        "properties": {
+          "revision_id": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "content_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "is_persistent": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "enum": [
+                  "assistant",
+                  "user"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_created": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "date_updated": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "revision_id"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "artifact": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "revision": {
+        "$ref": "#/$defs/Revision"
+      }
+    },
+    "required": [
+      "artifact",
+      "revision"
+    ],
+    "type": "object"
+  }
+}

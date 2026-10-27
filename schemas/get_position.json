@@ -1,0 +1,120 @@
+{
+  "name": "get_position",
+  "description": "Retrieve a domain's search ranking for several comma-separated keyword phrases in one request.",
+  "inputSchema": {
+    "properties": {
+      "keywords": {
+        "type": "string"
+      },
+      "domain": {
+        "type": "string"
+      },
+      "engine": {
+        "default": "google",
+        "enum": [
+          "google",
+          "yandexLive"
+        ],
+        "type": "string"
+      },
+      "device": {
+        "default": "desktop",
+        "enum": [
+          "desktop",
+          "mobile"
+        ],
+        "type": "string"
+      },
+      "top": {
+        "default": 10,
+        "enum": [
+          10,
+          20,
+          50,
+          100
+        ],
+        "type": "integer"
+      },
+      "region": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "keywords",
+      "domain"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "KeywordPositionItem": {
+        "properties": {
+          "keyword": {
+            "type": "string"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "keyword",
+          "position",
+          "url"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "task_id": {
+        "type": "string"
+      },
+      "engine": {
+        "type": "string"
+      },
+      "keywords_positions": {
+        "anyOf": [
+          {
+            "items": {
+              "$ref": "#/$defs/KeywordPositionItem"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "task_id",
+      "engine",
+      "keywords_positions"
+    ],
+    "type": "object"
+  }
+}

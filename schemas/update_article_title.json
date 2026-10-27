@@ -1,0 +1,70 @@
+{
+  "name": "update_article_title",
+  "description": "Change the name of an article.",
+  "inputSchema": {
+    "properties": {
+      "article_id": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "name": {
+        "maxLength": 255,
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "required": [
+      "article_id",
+      "name"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "dateCreated": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "dateUpdated": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "hasInvites": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "id",
+      "name"
+    ],
+    "type": "object"
+  }
+}

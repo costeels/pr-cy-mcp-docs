@@ -1,0 +1,51 @@
+{
+  "name": "replace_article_text",
+  "description": "Find and replace text in article block data.text, data.code and data.caption fields.",
+  "inputSchema": {
+    "properties": {
+      "article_id": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "search": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "replace": {
+        "type": "string"
+      },
+      "use_regex": {
+        "default": false,
+        "type": "boolean"
+      },
+      "replace_all": {
+        "default": true,
+        "type": "boolean"
+      },
+      "block_ids": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "article_id",
+      "search",
+      "replace"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "additionalProperties": true,
+    "type": "object"
+  }
+}

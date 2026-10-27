@@ -1,0 +1,59 @@
+{
+  "name": "get_region",
+  "description": "Resolve region names to region IDs for a selected search engine.",
+  "inputSchema": {
+    "properties": {
+      "engine": {
+        "enum": [
+          "yandex",
+          "google",
+          "yandexLive"
+        ],
+        "type": "string"
+      },
+      "region": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "engine",
+      "region"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "RegionItem": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "engine": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "engine"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "result": {
+        "items": {
+          "$ref": "#/$defs/RegionItem"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "result"
+    ],
+    "type": "object"
+  }
+}

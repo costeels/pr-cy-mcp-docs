@@ -1,0 +1,4815 @@
+# PR-CY MCP full documentation
+
+> English reference for the hosted PR-CY MCP server at https://mcp-server.pr-cy.ru. Checked on 2026-10-27 against server analysis 1.30.0 with 69 advertised tools. Examples use demonstration identifiers.
+
+
+---
+
+Source document: README.md
+
+# PR-CY MCP
+
+English documentation for the hosted PR-CY Model Context Protocol server. PR-CY gives AI agents access to keyword rankings, search results, keyword demand, website audits, Google Search Console, Yandex Webmaster, Yandex Metrika, page content, articles, and HTML artifacts.
+
+The server is available at `https://mcp-server.pr-cy.ru` and authenticates requests with a PR-CY API key in the `Authorization: Bearer <key>` header.
+
+This repository contains documentation and public interface schemas. It does not contain the server implementation or user account data. The reference was checked against the live server's `tools/list` response on **2026-10-27**: server `analysis`, version `1.30.0`, **69 tools**.
+
+## Start here
+
+- [Connect and authenticate](docs/quickstart.md)
+- [Browse all 69 tools](docs/tools/index.md)
+- [Keyword research, search and rankings](docs/workflows.md#keyword-research-and-search-results)
+- [Website audits and changes](docs/workflows.md#website-audits)
+- [Search traffic and Yandex Metrika](docs/workflows.md#traffic-and-conversion-reports)
+- [Articles and HTML artifacts](docs/workflows.md#articles-and-html-artifacts)
+- [Limits, errors and pagination](docs/limits-and-errors.md)
+- [Protocol and response formats](docs/protocol.md)
+- [Sources and update procedure](docs/sources.md)
+
+## Connect in Codex
+
+Make your PR-CY API key available as the `PR_CY_API_KEY` environment variable to the process running Codex. Add this server entry to your Codex `config.toml`:
+
+```toml
+[mcp_servers.pr-cy]
+url = "https://mcp-server.pr-cy.ru"
+bearer_token_env_var = "PR_CY_API_KEY"
+```
+
+Restart or reconnect the client after configuration changes. Ask the agent to discover the available tools, then try a task such as:
+
+```text
+Use PR-CY MCP to fetch the headings and metadata of https://example.com/.
+```
+
+For a small response, the agent can call `get_page_content` with these arguments:
+
+```json
+{
+  "page_url": "https://example.com/",
+  "format": "structure"
+}
+```
+
+Tool argument examples use demonstration domains and IDs. Replace them with the domain and identifiers relevant to your task.
+
+## Access requirements
+
+An API key is needed for every connection. Public-page extraction, search results, keyword demand and one-off ranking lookups do not require a PR-CY project. Project rankings, project crawler audits and connected analytics require a project with the relevant feature and data connection. Available operations consume the limits of the user's PR-CY plan where applicable.
+
+The current `get_serp` interface supports `google` and `yandexLive`. Its `language` parameter is fixed to `ru`. English documentation does not imply support for other search-interface languages.
+
+## Context7
+
+Submit the public repository URL at [Context7 Add Library](https://context7.com/add-library). The root `context7.json` selects the English documentation. Context7 will assign the actual library ID when the repository is submitted.
+
+Context7 retrieves these instructions and examples. A separate PR-CY MCP connection executes the tools. For a single-file documentation source, publish the included `llms-full.txt` and submit its public URL using Context7's llms.txt source option or API.
+
+## Product links
+
+- [PR-CY MCP product page](https://pr-cy.ru/pages/mcp/)
+- [PR-CY connection help](https://pr-cy.ru/help/article/mcp-server-connect/)
+- [Model Context Protocol](https://modelcontextprotocol.io/)
+
+
+---
+
+Source document: docs/context7-submission.md
+
+# Publish and submit the documentation
+
+This package can be hosted in a new public GitHub repository and submitted to Context7. It contains only English documentation, interface schemas and publication helpers. PR-CY API credentials and account data are not needed for publication and must not be uploaded.
+
+## Publish on GitHub
+
+Choose the GitHub account or organization authorized to host the documentation. The suggested repository name is `pr-cy-mcp-docs`; the package does not assume a particular GitHub owner.
+
+Use your existing GitHub authentication or provide a GitHub token through the `GITHUB_TOKEN` process environment. A token needs permission to create the selected repository and publish its files. Organization restrictions can require an organization owner's involvement.
+
+If Git Credential Manager is installed and has no saved GitHub login, start the normal device sign-in and complete it yourself:
+
+```bash
+git credential-manager github login --device --no-ui
+```
+
+After selecting the correct owner, run the publication helper from the package folder:
+
+```bash
+python scripts/publish_github.py --owner YOUR_GITHUB_ACCOUNT --repository pr-cy-mcp-docs
+```
+
+The helper creates a **new public repository**, commits the documentation and verifies the published file tree. It refuses to replace an existing repository. If it creates a repository but a later step fails, inspect that repository instead of blindly rerunning creation.
+
+For an existing repository, add the package through your normal Git workflow in an appropriate branch and review the changes before merging.
+
+## Submit to Context7
+
+Open [Context7 Add Library](https://context7.com/add-library), select GitHub and paste the published repository URL. The root `context7.json` selects `docs/` for parsing; root-level Markdown is also included according to Context7's current parsing rules.
+
+For API submission, obtain your Context7 API key from the dashboard and provide it through the `CONTEXT7_API_KEY` process environment. Run:
+
+```bash
+python scripts/submit_context7.py --repository-url https://github.com/YOUR_GITHUB_ACCOUNT/pr-cy-mcp-docs
+```
+
+The helper uses the documented endpoint and request shape:
+
+```http
+POST https://context7.com/api/v2/add/repo/github
+Authorization: Bearer YOUR_CONTEXT7_API_KEY
+Content-Type: application/json
+```
+
+```json
+{
+  "docsRepoUrl": "https://github.com/YOUR_GITHUB_ACCOUNT/pr-cy-mcp-docs"
+}
+```
+
+The API key is for **Context7**, not PR-CY. This submits a public repository; no GitHub access token is sent to Context7 by the helper. The helper records the returned submission data in `submission-result.json`, which is excluded from version control.
+
+## Verify availability
+
+A submitted repository can still be queued or parsing. Wait for the Context7 library to be ready and use the actual returned library ID. Check retrieval with these questions:
+
+```text
+How do I authenticate the PR-CY MCP server in Codex?
+Does get_wordstat accept an engine input?
+How does get_project_events.date_to differ from get_project_notes.date_to?
+Which device_type values does get_page_screenshot support?
+How do I edit an HTML artifact using the current revision_id?
+```
+
+Successful submission is not proof of successful indexing. Confirm that answers retrieve the relevant pages and current examples before reporting completion.
+
+## Optional ownership and updates
+
+Once the library exists, follow [Claim Your Library](https://context7.com/docs/howto/claiming-libraries) using the maintainer's own account. Add only the claim details generated for that account. Ownership is not required merely to submit a public repository.
+
+After future documentation changes, push the updated files and refresh the existing Context7 library. See [Keeping Libraries Fresh](https://context7.com/docs/library-updates).
+
+
+---
+
+Source document: docs/limits-and-errors.md
+
+# Limits, errors and pagination
+
+PR-CY tools run with the permissions and limits of the connected account. Public-page and search tasks still require an API key. Project data requires access to the project and the relevant feature or external data connection.
+
+## Check the appropriate limit
+
+Use `get_user_limits` with a non-empty `limits_filter`. The `competitorsAnalysis` limit requires `project_id` and should not be requested as a project-independent limit.
+
+```json
+{
+  "limits_filter": ["checks", "standardAnalysis"]
+}
+```
+
+```json
+{
+  "project_id": 123,
+  "limits_filter": ["competitorsAnalysis"]
+}
+```
+
+These are illustrative inputs. An omitted filter has a schema default that includes `competitorsAnalysis`; selecting the limits explicitly avoids requesting that project-specific item without a project.
+
+## Batch sizes
+
+- `create_keywords`: at most 100 keywords per call.
+- `delete_keywords` and `update_keywords_status`: at most 500 keyword IDs per call.
+- `modify_article_blocks`: at most 100 operations per call and 50 blocks per insert operation.
+- `get_wordstat`: up to five regions per call; seasonality covers up to 24 months.
+- `get_metrika_custom_query`: at most 20 metrics, 10 dimensions and 1,000 returned rows per call.
+- `generate_image`: up to 10 reference-image URLs in the captured schema.
+
+Some limits are documented behavioral constraints rather than explicit JSON Schema limits. Check both the schema and the tool's behavior notes.
+
+## Pagination
+
+Most list tools use `limit` and `offset`, but there is no universal pagination contract. Look at the individual tool's default and minimum offset, and use its response fields to determine whether more results exist.
+
+- Crawler page lists return `pages`, `total_pages_count` and `has_more`.
+- Project events return `has_more`. A response can contain fewer than `limit` events while more pages remain. `total_events_count` is measured before `exclude_events` is applied.
+- Project notes fetch the period's complete note list upstream, then apply `limit` and `offset` in the MCP tool. A narrower date range reduces upstream work.
+- `get_metrika_custom_query.offset` starts at **1**, not 0.
+
+## Dates and freshness
+
+Use `YYYY-MM-DD` for tools that require calendar dates. Metrika report tools also accept the relative date strings advertised by their schemas, such as `today`, `yesterday` and `7daysAgo`. Most Metrika reports default to the last seven days if dates are omitted.
+
+Google Search Console and Yandex Webmaster summary tools require dates no later than three days before the current date. Comparison inputs require both `prev_date_from` and `prev_date_to`. Date order must be valid.
+
+Date boundaries differ between tools:
+
+- `get_project_events`: `date_from` is inclusive; `date_to` is exclusive. To include a final calendar day, use the following day as `date_to`.
+- `get_project_notes`: both boundaries are inclusive.
+- `get_changed_crawler_pages`: both boundaries are inclusive in the account's time zone. Its response can include older history records; filter those records by their own dates when interpreting a requested period.
+
+## Validation failures
+
+For a missing field, invalid type or unsupported enum value, correct the input against the current tool schema. Do not repeatedly retry an unchanged invalid call. A JSON-schema-valid example does not guarantee project permissions, available limits or upstream data.
+
+If a long `create_article` call fails with `name: Field required`, the model's tool call may have been truncated. Create a short article first, then insert smaller batches of blocks. Apply the same approach to large artifact content.
+
+Article content replacement removes the existing blocks. Read the article before using `set_article_content`, and use `modify_article_blocks` for incremental changes.
+
+## Concurrent artifact edits
+
+Artifact write tools can require the current `revision_id`. Read the current artifact first and pass the returned revision ID. If another change has occurred, read again and reapply the intended edit to the current content. Do not guess an ID or blindly overwrite a newer revision.
+
+## Unknown outcomes and access errors
+
+After a timeout or uncertain response to a write, inspect the resource before retrying. In particular, `create_project_note` has no duplicate prevention: repeating the call can create a second note.
+
+Project note readers and editors can have different permissions. A user with team access may read notes but be unable to edit them unless they are the note author or project owner. At least one of `name`, `note_date` or `text` must be supplied to `update_project_note`. Omitted or null fields remain unchanged; an empty `text` clears the text. Note deletion is not exposed by this tool set.
+
+This reference does not promise a single fixed HTTP status-code mapping for every tool. Inspect the actual protocol error or tool result, then distinguish authentication, permissions, missing data, exhausted limits, validation errors and upstream failures.
+
+
+---
+
+Source document: docs/protocol.md
+
+# Protocol and response formats
+
+PR-CY exposes a hosted MCP endpoint at `https://mcp-server.pr-cy.ru`. Requests authenticate with a PR-CY API key in the `Authorization: Bearer <key>` header. MCP protocol messages use JSON-RPC 2.0.
+
+## Initialization and discovery
+
+Use a compatible MCP client to handle HTTP transport, initialization, protocol negotiation and any session headers. During discovery on 2026-10-27, the server accepted protocol version `2025-06-18` and returned this server identity:
+
+```json
+{
+  "name": "analysis",
+  "version": "1.30.0"
+}
+```
+
+An initialization request has the following shape:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {},
+    "clientInfo": {
+      "name": "example-client",
+      "version": "1.0.0"
+    }
+  }
+}
+```
+
+Use the protocol version negotiated by the server. Send `notifications/initialized`, retain `Mcp-Session-Id` if returned, and use the negotiated `MCP-Protocol-Version` header as required by the transport. HTTP clients should support JSON and event-stream responses through the MCP transport rather than assuming every response body is a plain JSON object.
+
+Discover tool definitions with `tools/list`; follow `nextCursor` when it is present:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list",
+  "params": {}
+}
+```
+
+The response advertises tool names, descriptions, input schemas and output schemas. The hosted server is the source of truth. Client-side wrappers can expose a different parameter subset; use the schema available in the actual connection through which a call will run.
+
+## Calling a tool
+
+Use the exact discovered tool name under `params.name`. Input fields belong under `params.arguments`, with the types and enum values declared by that tool's input schema.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "get_user_project_by_domain",
+    "arguments": {
+      "domain": "example.com"
+    }
+  }
+}
+```
+
+Do not turn MCP tool names into invented REST routes such as `/get_user_project`. MCP calls use the protocol endpoint.
+
+## Interpreting a result
+
+Separate a JSON-RPC protocol error from a tool result. MCP tool results can contain text, structured content and an error flag. When structured content is available, interpret it using the tool's advertised `outputSchema`. Otherwise, inspect the returned content without assuming an undocumented response shape.
+
+The `schemas/` directory contains the input and output schemas observed for each tool, with descriptive annotations omitted to keep the schema files language-neutral. The English reference explains behavioral constraints that are not fully represented by JSON Schema.
+
+Responses from reports may retain upstream field names, including camelCase fields. Events use the language of the PR-CY account. English documentation does not change the language of account data or search results.
+
+## Interface differences
+
+The live `get_wordstat` schema checked for this repository does not include an `engine` input. `get_serp` supports only `google` and `yandexLive`, while `get_region` additionally supports `yandex`. `get_page_screenshot.device_type` uses `smartphone`, `tablet` and `desktop`; `get_serp.device` uses `desktop` and `mobile`.
+
+Use current discovery instead of adapting a similarly named parameter from another tool.
+
+
+---
+
+Source document: docs/quickstart.md
+
+# Connect to PR-CY MCP
+
+PR-CY runs a hosted MCP server at `https://mcp-server.pr-cy.ru`. An MCP client discovers its tools and calls them on behalf of the connected user. No local PR-CY server or source-code checkout is required.
+
+## Obtain an API key
+
+Get a PR-CY API key from the API settings in your PR-CY account, using the link on the [MCP product page](https://pr-cy.ru/pages/mcp/). The server expects:
+
+```http
+Authorization: Bearer YOUR_PR_CY_API_KEY
+```
+
+`YOUR_PR_CY_API_KEY` is a placeholder. Keep a real key in your client or secret manager; do not commit it to a repository, put it in a public example, or send it to Context7.
+
+## Codex
+
+Provide `PR_CY_API_KEY` in the environment of the process running Codex. Add the following entry to the user's `config.toml`:
+
+```toml
+[mcp_servers.pr-cy]
+url = "https://mcp-server.pr-cy.ru"
+bearer_token_env_var = "PR_CY_API_KEY"
+```
+
+Reconnect the MCP server or restart the client so the configuration and environment are reloaded. See [Codex MCP documentation](https://developers.openai.com/codex/mcp/) for the current configuration options.
+
+## Clients using mcpServers JSON
+
+For clients that accept remote HTTP servers under `mcpServers`, use this connection shape and configure the API key through the client's supported secret or environment mechanism:
+
+```json
+{
+  "mcpServers": {
+    "pr-cy": {
+      "url": "https://mcp-server.pr-cy.ru",
+      "headers": {
+        "Authorization": "Bearer YOUR_PR_CY_API_KEY"
+      }
+    }
+  }
+}
+```
+
+This is a remote-server configuration shape, not a universal configuration file. Clients differ in file locations, environment-variable interpolation and HTTP transport support. The PR-CY [product page](https://pr-cy.ru/pages/mcp/#connect) provides client-specific instructions for Cursor, Claude, OpenCode and other clients.
+
+## Verify the connection
+
+Have the client initialize the MCP connection and discover tools. On 2026-10-27, the server identified itself as `analysis` version `1.30.0` and advertised 69 tools. Use the tools discovered by your own connection if the server has changed.
+
+Start with a public-page request:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_page_content",
+    "arguments": {
+      "page_url": "https://example.com/",
+      "format": "structure"
+    }
+  }
+}
+```
+
+The example is a message handled by an initialized MCP client. For direct HTTP integrations, complete the initialization and transport steps in [Protocol](protocol.md) first. This page does not show a live extraction result.
+
+## Discover a project
+
+For project reports, call `get_user_project_by_domain` with a domain such as `example.com` or list projects with `get_user_projects`. Use the returned `project_id` in subsequent reports. Retrieve search-option IDs with `get_user_keywords_projects` and goal IDs with `get_metrika_goals` when the task needs them.
+
+```json
+{
+  "domain": "example.com"
+}
+```
+
+Never substitute a keyword-group ID, search-option ID or Metrika goal ID for a project ID. Some tools accept a domain instead of a project ID; consult each tool's reference.
+
+
+---
+
+Source document: docs/sources.md
+
+# Sources and updates
+
+## Reference provenance
+
+This repository's English documentation was prepared from public PR-CY product instructions and an authenticated MCP metadata discovery. Metadata discovery does not read project reports, articles or account data.
+
+- Product and connection information: [PR-CY MCP](https://pr-cy.ru/pages/mcp/) and [connection help](https://pr-cy.ru/help/article/mcp-server-connect/).
+- Tools, field names, required inputs, enums, schema defaults and output types: the live `tools/list` response from `https://mcp-server.pr-cy.ru`, captured on 2026-10-27.
+- Server identity: `analysis`, version `1.30.0`; negotiated MCP protocol version `2025-06-18`; 69 advertised tools.
+- Codex setup: [official MCP documentation](https://developers.openai.com/codex/mcp/).
+- Context7 submission: [Adding Libraries](https://context7.com/docs/adding-libraries) and [Library Owners](https://context7.com/docs/library-owners).
+
+The product page advertised 48 tools at the time it was checked. The reference follows the 69 tools from live metadata discovery. The checked tool schemas can also differ from a preconfigured agent's wrapper interface. The reference describes the hosted server's observed interface, not a promise that every wrapper exposes all fields.
+
+## What was verified
+
+Input schemas, output schemas and all tool example argument objects were validated locally against the captured schemas. Internal documentation links, Context7 configuration and the public package were checked for consistency and secret leakage.
+
+Example domains, project IDs, goal IDs, article IDs and revision IDs are demonstration values. Examples were not executed against real projects, and illustrative content objects were not tested for application-level editing behavior. A schema-valid input can still require valid permissions, account limits, data connections or stricter service-level validation.
+
+## Updating the reference
+
+1. Initialize an authenticated PR-CY MCP connection and retrieve every page of `tools/list`.
+2. Compare the advertised tool names, input schemas, output schemas and behavioral descriptions with this reference.
+3. Update the English tool pages and language-neutral schemas together. Preserve documented service-level constraints that JSON Schema does not encode.
+4. Validate examples, links and `context7.json`. Update the checked date and server identity.
+5. Rebuild `llms-full.txt` from the English documentation.
+6. Push documentation changes to the public repository and refresh its actual Context7 library ID.
+
+Context7 parses documentation files and extracts explanations and code examples. Its current public-library guidance says mainly non-English documentation is skipped. This repository's indexed pages are English.
+
+## Publishing and ownership
+
+The files can be published in a public repository without publishing PR-CY server source code or account data. Creating the repository, submitting it to Context7 and claiming library ownership are separate actions. Ownership verification requires the repository maintainer's Context7 account and the claim instructions generated for that account; this package does not fabricate an ownership key or a library ID.
+
+After publication, submit the repository at [Add Library](https://context7.com/add-library). Use the actual library ID returned by Context7 and wait for parsing to finish before claiming successful availability. Test retrieval with questions about connection, keyword demand, crawler pagination, project note dates and artifact revisions.
+
+
+---
+
+Source document: docs/tools/check_positions.md
+
+# check_positions
+
+Launch a project keyword-ranking check for one or all active search settings.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+This launches a check and can consume account limits. Omit search_options_id only when a check of all active project search settings is intended.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `search_options_id`: optional; integer or null. Schema default: `null`. greater than: 0. Search-settings ID returned by keyword-project discovery.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "check_positions",
+    "arguments": {
+      "project_id": 123,
+      "search_options_id": 456
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `status`: "success" | "error"; required in the output schema.
+
+The complete input and output schemas are in [check_positions.json](../../schemas/check_positions.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/count_article_blocks.md
+
+# count_article_blocks
+
+Count article blocks matching substring and block-type filters without returning the blocks.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Search substrings combine with OR; search and types combine with AND. This tool exposes only article_id, search and types, not the neighboring-context inputs of get_article_blocks.
+
+## Arguments
+
+- `article_id`: required; string. minimum text length: 1. Article ID returned by article creation or listing.
+- `search`: optional; array of string or null. Schema default: `null`. Search text, or a list of substrings for article-block filtering.
+- `types`: optional; array of "paragraph" | "header" | "list" | "image" | "quote" | "code" | "delimiter" | "table" or null. Schema default: `null`. Article block types to include.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "count_article_blocks",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "search": [
+        "laptop"
+      ]
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [count_article_blocks.json](../../schemas/count_article_blocks.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/create_article.md
+
+# create_article
+
+Create an article with a name and optional initial blocks.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+For long articles, create a small initial article and insert the remaining blocks with modify_article_blocks. A truncated oversized call may fail with a missing name field. Keep each insert to at most 50 blocks.
+
+## Arguments
+
+- `name`: required; string. minimum text length: 1; maximum text length: 255. Name of the article, keyword group or project note.
+- `body`: optional; array of object or null. Schema default: `null`. Structured article body content.
+
+### CodeBlock
+
+- `id`: optional; string or null. Schema default: `null`.
+- `type`: optional; "code". Schema default: `"code"`. Artifact type; only html is supported.
+- `data`: required; object.
+
+### CodeData
+
+- `code`: required; string.
+
+### DelimiterBlock
+
+- `id`: optional; string or null. Schema default: `null`.
+- `type`: optional; "delimiter". Schema default: `"delimiter"`. Artifact type; only html is supported.
+- `data`: required; object.
+
+### DelimiterData
+
+
+### HeaderBlock
+
+- `id`: optional; string or null. Schema default: `null`.
+- `type`: optional; "header". Schema default: `"header"`. Artifact type; only html is supported.
+- `data`: required; object.
+
+### HeaderData
+
+- `text`: required; string. Project note text.
+- `level`: required; integer. minimum: 1; maximum: 6.
+
+### ImageBlock
+
+- `id`: optional; string or null. Schema default: `null`.
+- `type`: optional; "image". Schema default: `"image"`. Artifact type; only html is supported.
+- `data`: required; object.
+
+### ImageData
+
+- `file`: required; object.
+- `caption`: optional; string or null. Schema default: `null`.
+- `withBorder`: optional; boolean or null. Schema default: `null`.
+- `stretched`: optional; boolean or null. Schema default: `null`.
+- `withBackground`: optional; boolean or null. Schema default: `null`.
+
+### ImageFile
+
+- `url`: required; string. Search-performance URL filter object.
+
+### ListBlock
+
+- `id`: optional; string or null. Schema default: `null`.
+- `type`: optional; "list". Schema default: `"list"`. Artifact type; only html is supported.
+- `data`: required; object.
+
+### ListData
+
+- `style`: required; "ordered" | "unordered".
+- `items`: required; array of object.
+
+### ListItem
+
+- `content`: required; string. HTML draft content.
+- `items`: optional; array of object or null. Schema default: `null`.
+
+### ParagraphBlock
+
+- `id`: optional; string or null. Schema default: `null`.
+- `type`: optional; "paragraph". Schema default: `"paragraph"`. Artifact type; only html is supported.
+- `data`: required; object.
+
+### ParagraphData
+
+- `text`: required; string. Project note text.
+
+### QuoteBlock
+
+- `id`: optional; string or null. Schema default: `null`.
+- `type`: optional; "quote". Schema default: `"quote"`. Artifact type; only html is supported.
+- `data`: required; object.
+
+### QuoteData
+
+- `text`: required; string. Project note text.
+- `caption`: optional; string or null. Schema default: `null`.
+- `alignment`: optional; string or null. Schema default: `null`.
+
+### TableBlock
+
+- `id`: optional; string or null. Schema default: `null`.
+- `type`: optional; "table". Schema default: `"table"`. Artifact type; only html is supported.
+- `data`: required; object.
+
+### TableData
+
+- `withHeadings`: optional; boolean or null. Schema default: `null`.
+- `content`: required; array of array of string. HTML draft content.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "create_article",
+    "arguments": {
+      "name": "Laptop buying guide"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `id`: string; required in the output schema.
+- `name`: string; required in the output schema.
+- `body`: array of object or null; optional in the output schema.
+- `extraData`: object or null; optional in the output schema.
+- `dateCreated`: string or null; optional in the output schema.
+- `dateUpdated`: string or null; optional in the output schema.
+- `hasInvites`: boolean or null; optional in the output schema.
+
+The complete input and output schemas are in [create_article.json](../../schemas/create_article.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/create_artifact.md
+
+# create_artifact
+
+Create an HTML artifact and its initial draft.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Only html artifacts are supported in the captured interface. Start large documents with a short draft, then add or replace content in smaller calls.
+
+## Arguments
+
+- `type`: optional; "html". Schema default: `"html"`. Artifact type; only html is supported.
+- `title`: optional; string or null. Schema default: `null`. Artifact title or a title filter, depending on the tool.
+- `content`: optional; string. Schema default: `""`. HTML draft content.
+- `created_by`: optional; "assistant" | "user". Schema default: `"assistant"`. Revision author category.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "create_artifact",
+    "arguments": {
+      "type": "html",
+      "title": "SEO report",
+      "content": "<!doctype html><html lang=\"en\"><head><title>SEO report</title></head><body><h1>SEO report</h1></body></html>"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `artifact`: object; required in the output schema.
+- `revision`: object; required in the output schema.
+
+The complete input and output schemas are in [create_artifact.json](../../schemas/create_artifact.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/create_keyword_group.md
+
+# create_keyword_group
+
+Create a named keyword group in a project.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `name`: required; string. minimum text length: 1. Name of the article, keyword group or project note.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "create_keyword_group",
+    "arguments": {
+      "project_id": 123,
+      "name": "Laptops"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `id`: integer; required in the output schema.
+- `name`: string; required in the output schema.
+
+The complete input and output schemas are in [create_keyword_group.json](../../schemas/create_keyword_group.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/create_keywords.md
+
+# create_keywords
+
+Add a batch of keywords to a project, with optional target URLs and group assignments.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+At most 100 keywords per call. Each item has a keyword and can include target_url and group_ids. Split long batches into separate calls.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `keywords`: required; array of object. minimum items: 1; maximum items: 100. Keyword items to create.
+
+### KeywordCreateItem
+
+- `keyword`: required; string. minimum text length: 1. Keyword phrase.
+- `target_url`: optional; string or null. Schema default: `null`. minimum text length: 1. Target page URL for a keyword.
+- `group_ids`: optional; array of integer. Keyword-group IDs to associate with a keyword.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "create_keywords",
+    "arguments": {
+      "project_id": 123,
+      "keywords": [
+        {
+          "keyword": "buy laptop",
+          "target_url": "https://example.com/laptops/",
+          "group_ids": [
+            456
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [create_keywords.json](../../schemas/create_keywords.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/create_project_note.md
+
+# create_project_note
+
+Create a dated project note documenting work on a website.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Use plain text without emoji. Creation is not deduplicated; inspect notes after an uncertain response before retrying the call.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `name`: required; string. minimum text length: 1; maximum text length: 200. Name of the article, keyword group or project note.
+- `note_date`: required; string. Calendar date of the project note.
+- `text`: optional; string or null. Schema default: `null`. maximum text length: 20000. Project note text.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "create_project_note",
+    "arguments": {
+      "project_id": 123,
+      "name": "Updated category titles",
+      "note_date": "2026-10-20",
+      "text": "Updated title tags on laptop category pages."
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `id`: integer; required in the output schema.
+- `name`: string; required in the output schema.
+- `text`: string; required in the output schema.
+- `date`: string; required in the output schema.
+
+The complete input and output schemas are in [create_project_note.json](../../schemas/create_project_note.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/delete_article.md
+
+# delete_article
+
+Delete an article identified by its article ID.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `article_id`: required; string. minimum text length: 1. Article ID returned by article creation or listing.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "delete_article",
+    "arguments": {
+      "article_id": "ARTICLE_ID"
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [delete_article.json](../../schemas/delete_article.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/delete_keyword_group.md
+
+# delete_keyword_group
+
+Delete a keyword group by its group ID.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `group_id`: required; integer. greater than: 0. Keyword-group ID returned by group discovery or creation.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "delete_keyword_group",
+    "arguments": {
+      "group_id": 456
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `status`: "success" | "error"; required in the output schema.
+
+The complete input and output schemas are in [delete_keyword_group.json](../../schemas/delete_keyword_group.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/delete_keywords.md
+
+# delete_keywords
+
+Delete selected keywords by their numeric keyword IDs.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+At most 500 IDs per call. Read the intended keywords and use the specific IDs relevant to the requested deletion.
+
+## Arguments
+
+- `keyword_ids`: required; array of integer. minimum items: 1; maximum items: 500. Keyword IDs from project keyword discovery.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "delete_keywords",
+    "arguments": {
+      "keyword_ids": [
+        123,
+        124
+      ]
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `status`: "success" | "error"; required in the output schema.
+
+The complete input and output schemas are in [delete_keywords.json](../../schemas/delete_keywords.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/diff_artifact.md
+
+# diff_artifact
+
+Compare two artifact revisions using a unified diff.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+from_revision_id identifies the source revision. Omit to_revision_id to compare with the active revision.
+
+## Arguments
+
+- `artifact_id`: required; integer. greater than: 0. Artifact ID returned by artifact creation or listing.
+- `from_revision_id`: required; integer. greater than: 0. Source revision ID for a diff.
+- `to_revision_id`: optional; integer or null. Schema default: `null`. Target revision ID for a comparison or restoration.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "diff_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "from_revision_id": 456,
+      "to_revision_id": 457
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `from_revision`: object; required in the output schema.
+- `to_revision`: object; required in the output schema.
+- `is_equal`: boolean; required in the output schema.
+- `diff`: string; required in the output schema.
+
+The complete input and output schemas are in [diff_artifact.json](../../schemas/diff_artifact.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/finalize_artifact.md
+
+# finalize_artifact
+
+Finalize the active artifact draft as the next version.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Read or edit the artifact first and use its current draft revision_id. Finalization creates the next finalized version.
+
+## Arguments
+
+- `artifact_id`: required; integer. greater than: 0. Artifact ID returned by artifact creation or listing.
+- `revision_id`: required; integer. greater than: 0. Draft revision ID; use the current revision when guarding a write.
+- `message`: optional; string or null. Schema default: `null`. Message associated with artifact finalization.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "finalize_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "revision_id": 456,
+      "message": "Publish the completed SEO report"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `artifact`: object; required in the output schema.
+- `revision`: object; required in the output schema.
+
+The complete input and output schemas are in [finalize_artifact.json](../../schemas/finalize_artifact.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/generate_image.md
+
+# generate_image
+
+Generate an image from a text prompt, optionally using reference-image URLs.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+This generates an image and can consume account limits. The captured interface accepts up to 10 reference-image URLs. Model availability may change; prefer current tool discovery over a hardcoded model list.
+
+## Arguments
+
+- `prompt`: required; string. Text description of the image to generate.
+- `aspect_ratio`: optional; "1:1" | "9:16" | "16:9" | "3:4" | "4:3" | "2:3" | "3:2" | "4:5" | "5:4" | "21:9". Schema default: `"1:1"`. Generated-image aspect ratio.
+- `model`: optional; "auto" | "gpt-image-2.5-flare" | "nano-banana-2.1" | "nano-banana-2" | "nano-banana-2-lite" | "nano-banana-pro" | "seedream/v4.5" | "flux-2" | "flux-3" | "recraft-v4" | "ideogram" | "schnell". Schema default: `"auto"`. Image-generation model selected from the current enum.
+- `reference_images`: optional; array of string or null. Schema default: `null`. maximum items: 10. Reference-image URLs; at most 10 in the captured interface.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "generate_image",
+    "arguments": {
+      "prompt": "A clean editorial illustration of a laptop on a desk.",
+      "aspect_ratio": "16:9",
+      "model": "auto"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `task_id`: string; required in the output schema.
+- `image_url`: string; required in the output schema.
+- `error_code`: string or null; optional in the output schema.
+
+The complete input and output schemas are in [generate_image.json](../../schemas/generate_image.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_article.md
+
+# get_article
+
+Retrieve an article and, optionally, its block data.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `article_id`: required; string. minimum text length: 1. Article ID returned by article creation or listing.
+- `include_block_data`: optional; boolean. Schema default: `false`. Include the article's block data when true.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_article",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "include_block_data": true
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `id`: string; required in the output schema.
+- `name`: string; required in the output schema.
+- `body`: array of object or null; optional in the output schema.
+- `extraData`: object or null; optional in the output schema.
+- `dateCreated`: string or null; optional in the output schema.
+- `dateUpdated`: string or null; optional in the output schema.
+- `hasInvites`: boolean or null; optional in the output schema.
+
+The complete input and output schemas are in [get_article.json](../../schemas/get_article.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_article_blocks.md
+
+# get_article_blocks
+
+Retrieve article blocks matching substring and block-type filters, with optional neighboring context.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+The search and types filters combine with AND. Individual search substrings combine with OR. Context windows from blocks_before and blocks_after are merged, preserve article order and do not increase blocksCount, which counts matches only.
+
+## Arguments
+
+- `article_id`: required; string. minimum text length: 1. Article ID returned by article creation or listing.
+- `search`: optional; array of string or null. Schema default: `null`. Search text, or a list of substrings for article-block filtering.
+- `types`: optional; array of "paragraph" | "header" | "list" | "image" | "quote" | "code" | "delimiter" | "table" or null. Schema default: `null`. Article block types to include.
+- `variant`: optional; "full" | "meta". Schema default: `"full"`. Article-block response variant.
+- `blocks_before`: optional; integer. Schema default: `0`. minimum: 0. Neighboring blocks before each matching article block.
+- `blocks_after`: optional; integer. Schema default: `0`. minimum: 0. Neighboring blocks after each matching article block.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_article_blocks",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "search": [
+        "laptop"
+      ],
+      "blocks_before": 1,
+      "blocks_after": 1
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_article_blocks.json](../../schemas/get_article_blocks.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_changed_crawler_pages.md
+
+# get_changed_crawler_pages
+
+Find audited pages whose selected tracked field changed during a date range.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Requires a configured crawler audit. Select one tracked field per call. Date boundaries are inclusive in the account time zone. Returned page history is not clipped to the date range. Both dates should be supplied for an unambiguous range. Pages from older audits can be present.
+
+## Arguments
+
+- `domain`: required; string. minimum text length: 1. Project or target domain, such as example.com.
+- `field`: required; "statusCode" | "title" | "description" | "h1Content" | "textLength" | "noIndexRobots" | "noIndexHttp" | "noIndexMeta" | "canonicalFromHeader" | "canonicalFromHtml". Tracked crawler history field to inspect.
+- `value`: optional; boolean or integer or null. Schema default: `null`. Optional tracked-field value filter.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `limit`: optional; integer. Schema default: `20`. minimum: 1; maximum: 100. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer. Schema default: `0`. minimum: 0. Starting offset; follow this tool's minimum and default.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_changed_crawler_pages",
+    "arguments": {
+      "domain": "example.com",
+      "field": "title",
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `pages`: array of object; required in the output schema.
+- `total_pages_count`: integer; required in the output schema.
+- `has_more`: boolean; required in the output schema.
+
+The complete input and output schemas are in [get_changed_crawler_pages.json](../../schemas/get_changed_crawler_pages.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_crawler_analysis_summary.md
+
+# get_crawler_analysis_summary
+
+Retrieve the latest crawler-audit summary, health score, issue counts and optional history.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Requires a configured crawler audit. results.health.rank ranges from 0 to 1. is_updating means totals are incomplete. history=days covers the last 31 days; weeks returns weekly medians for the last year; months returns monthly medians for all history. Use history_blocks to request only relevant summary blocks.
+
+## Arguments
+
+- `domain`: required; string. minimum text length: 1. Project or target domain, such as example.com.
+- `history`: optional; "none" | "days" | "weeks" | "months". Schema default: `"none"`. Crawler-summary history interval.
+- `history_blocks`: optional; array of string or null. Schema default: `null`. Crawler-summary result blocks for which history is needed.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_crawler_analysis_summary",
+    "arguments": {
+      "domain": "example.com",
+      "history": "none"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `id`: string; required in the output schema.
+- `domain`: string; required in the output schema.
+- `created`: string or null; optional in the output schema.
+- `started`: string or null; optional in the output schema.
+- `updated`: string or null; optional in the output schema.
+- `modified`: string or null; optional in the output schema.
+- `is_updating`: boolean; required in the output schema.
+- `is_expired`: boolean; required in the output schema.
+- `is_not_responding`: boolean; required in the output schema.
+- `pages_limit`: integer; required in the output schema.
+- `indexed_links_count`: integer; required in the output schema.
+- `failed_links_count`: integer; required in the output schema.
+- `new_links_count`: integer; required in the output schema.
+- `in_progress_links_count`: integer; required in the output schema.
+- `not_canonical_links_count`: integer; required in the output schema.
+- `use_robots_txt`: boolean; required in the output schema.
+- `robot_type`: string or null; optional in the output schema.
+- `crawler_mode`: array of string; required in the output schema.
+- `used_sitemaps`: array of string; optional in the output schema.
+- `crawler_user_links`: array of string; optional in the output schema.
+- `results`: object; required in the output schema.
+- `history`: object with object with object values values or null; optional in the output schema.
+
+The complete input and output schemas are in [get_crawler_analysis_summary.json](../../schemas/get_crawler_analysis_summary.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_crawler_pages.md
+
+# get_crawler_pages
+
+List audited website pages with full page checks and combined issue filters.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Requires a configured project crawler audit. Filters combine with AND. Issue flags filter when true; false behaves like an omitted flag. Responses contain pages, total_pages_count and has_more. Keep page size small when full page checks are not needed.
+
+## Arguments
+
+- `domain`: required; string. minimum text length: 1. Project or target domain, such as example.com.
+- `url_contains`: optional; string or null. Schema default: `null`. Substring that an audited page URL must contain.
+- `status_code`: optional; integer or null. Schema default: `null`. greater than: 0.
+- `title_contains`: optional; string or null. Schema default: `null`.
+- `title_equals`: optional; string or null. Schema default: `null`.
+- `title_types`: optional; array of "none" | "short" | "long" | "normal" or null. Schema default: `null`.
+- `duplicated_title`: optional; boolean. Schema default: `false`.
+- `description_contains`: optional; string or null. Schema default: `null`.
+- `description_equals`: optional; string or null. Schema default: `null`.
+- `description_types`: optional; array of "none" | "short" | "long" | "normal" or null. Schema default: `null`.
+- `duplicated_description`: optional; boolean. Schema default: `false`.
+- `h1_contains`: optional; string or null. Schema default: `null`.
+- `h1_equals`: optional; string or null. Schema default: `null`.
+- `h1_types`: optional; array of "none" | "tooMany" | "normal" or null. Schema default: `null`.
+- `duplicated_h1`: optional; boolean. Schema default: `false`.
+- `h1_equals_title`: optional; boolean. Schema default: `false`.
+- `canonical_status`: optional; "canonical" | "notCanonical" | "absentCanonical" | "error" or null. Schema default: `null`.
+- `canonical_error_group`: optional; "all" | "multipleLinks" | "notAbsoluteLink" | "otherDomainLink" | "mismatchedLinks" | "insecureLink" or null. Schema default: `null`.
+- `links_count_errors`: optional; array of "internal" | "external" | "normal" or null. Schema default: `null`.
+- `charset_types`: optional; array of "success" | "info" | "error" or null. Schema default: `null`.
+- `no_index`: optional; boolean or null. Schema default: `null`.
+- `no_follow`: optional; boolean. Schema default: `false`.
+- `slow_page`: optional; boolean. Schema default: `false`.
+- `slow_ttfb`: optional; boolean. Schema default: `false`.
+- `heavy_html`: optional; boolean. Schema default: `false`.
+- `short_text`: optional; boolean. Schema default: `false`.
+- `meta_refresh_found`: optional; boolean. Schema default: `false`.
+- `redirect_is_insecure`: optional; boolean. Schema default: `false`.
+- `insecure_links`: optional; boolean. Schema default: `false`.
+- `absent_images_alt`: optional; boolean. Schema default: `false`.
+- `links_with_double_slash`: optional; boolean. Schema default: `false`.
+- `external_links_with_empty_anchor`: optional; boolean. Schema default: `false`.
+- `internal_links_with_empty_anchor`: optional; boolean. Schema default: `false`.
+- `links_without_href`: optional; boolean. Schema default: `false`.
+- `has_broken_links`: optional; boolean. Schema default: `false`.
+- `og_basic_not_filled`: optional; boolean. Schema default: `false`.
+- `og_not_canonical`: optional; boolean. Schema default: `false`.
+- `twitter_card_not_filled`: optional; boolean. Schema default: `false`.
+- `sort`: optional; "loadTime" | "-loadTime" | "ttfb" | "-ttfb" | "htmlSize" | "-htmlSize" | "h1Count" | "-h1Count" | "title" | "-title" | "textLength" | "-textLength" | "internalLinksCount" | "-internalLinksCount" | "externalLinksCount" | "-externalLinksCount" | "insecureLinksCount" | "-insecureLinksCount" or null. Schema default: `null`. Sort specification; its shape and allowed fields differ by tool.
+- `limit`: optional; integer. Schema default: `20`. minimum: 1; maximum: 100. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer. Schema default: `0`. minimum: 0. Starting offset; follow this tool's minimum and default.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_crawler_pages",
+    "arguments": {
+      "domain": "example.com",
+      "duplicated_title": true,
+      "limit": 20,
+      "offset": 0
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `pages`: array of object; required in the output schema.
+- `total_pages_count`: integer; required in the output schema.
+- `has_more`: boolean; required in the output schema.
+
+The complete input and output schemas are in [get_crawler_pages.json](../../schemas/get_crawler_pages.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_keywords.md
+
+# get_keywords
+
+List project keywords, keyword groups and target URLs.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `limit`: optional; integer. Schema default: `100`. minimum: 1; maximum: 1000. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer. Schema default: `0`. minimum: 0. Starting offset; follow this tool's minimum and default.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_keywords",
+    "arguments": {
+      "project_id": 123,
+      "limit": 20,
+      "offset": 0
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [get_keywords.json](../../schemas/get_keywords.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_keywords_by_url.md
+
+# get_keywords_by_url
+
+Retrieve keywords associated with a page URL.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `page_url`: required; string. Full URL of the page to inspect.
+- `per_page`: optional; integer. Schema default: `20`. minimum: 1; maximum: 1000. Maximum number of page-keyword results.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_keywords_by_url",
+    "arguments": {
+      "page_url": "https://example.com/laptops/",
+      "per_page": 20
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `task_id`: string; required in the output schema.
+- `organic_keywords_total`: integer; required in the output schema.
+- `organic_keywords`: array of object or null; required in the output schema.
+
+The complete input and output schemas are in [get_keywords_by_url.json](../../schemas/get_keywords_by_url.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_keywords_pages_summary.md
+
+# get_keywords_pages_summary
+
+Retrieve keyword and page search-performance summaries from Google Search Console and Yandex Webmaster.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Requires connected GSC or Yandex Webmaster data. source accepts gsc, webmaster or all. Date inputs must be no later than three days before the current date. Provide both previous-period dates for a comparison. Keyword and URL filters use objects with value and optional compare_type; regex uses RE2.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `source`: optional; "gsc" | "webmaster" | "all". Schema default: `"all"`. Search-performance data source.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `prev_date_from`: optional; string or null. Schema default: `null`. Start of the comparison period; pair with prev_date_to.
+- `prev_date_to`: optional; string or null. Schema default: `null`. End of the comparison period; pair with prev_date_from.
+- `keyword`: optional; object with string values or null. Schema default: `null`. Keyword filter object.
+- `url`: optional; object with string values or null. Schema default: `null`. Search-performance URL filter object.
+- `metrics_filter`: optional; object with object with integer or number values values or null. Schema default: `null`. Metric-range filter object in the search-performance report.
+- `sort`: optional; string or null. Schema default: `"-impressions"`. Sort specification; its shape and allowed fields differ by tool.
+- `limit`: optional; integer or null. Schema default: `null`. greater than: 0. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer or null. Schema default: `null`. minimum: 0. Starting offset; follow this tool's minimum and default.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_keywords_pages_summary",
+    "arguments": {
+      "project_id": 123,
+      "source": "gsc",
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [get_keywords_pages_summary.json](../../schemas/get_keywords_pages_summary.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_keywords_positions_history.md
+
+# get_keywords_positions_history
+
+Retrieve historical project keyword rankings for a selected search setting.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `search_options_id`: required; integer. greater than: 0. Search-settings ID returned by keyword-project discovery.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `limit`: optional; integer. Schema default: `100`. minimum: 1; maximum: 1000. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer. Schema default: `0`. minimum: 0. Starting offset; follow this tool's minimum and default.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_keywords_positions_history",
+    "arguments": {
+      "search_options_id": 456,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [get_keywords_positions_history.json](../../schemas/get_keywords_positions_history.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_keywords_summaries.md
+
+# get_keywords_summaries
+
+Retrieve project keyword summaries for a selected search setting.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `search_options_id`: required; integer. greater than: 0. Search-settings ID returned by keyword-project discovery.
+- `limit`: optional; integer. Schema default: `100`. minimum: 1; maximum: 1000. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer. Schema default: `0`. minimum: 0. Starting offset; follow this tool's minimum and default.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_keywords_summaries",
+    "arguments": {
+      "project_id": 123,
+      "search_options_id": 456,
+      "limit": 20,
+      "offset": 0
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [get_keywords_summaries.json](../../schemas/get_keywords_summaries.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_conversion_rate_by_source_and_landing.md
+
+# get_metrika_conversion_rate_by_source_and_landing
+
+Retrieve conversion rates by traffic source and landing page for a Yandex Metrika goal.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `goal_id`: required; integer. Metrika goal ID from get_metrika_goals.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `sort`: optional; array of string. Schema default: `[]`. minimum items: 0; maximum items: 5. Sort specification; its shape and allowed fields differ by tool.
+- `limit`: optional; integer. Schema default: `100`. maximum: 1000; greater than: 0. Maximum rows or records requested for this page of results.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_conversion_rate_by_source_and_landing",
+    "arguments": {
+      "project_id": 123,
+      "goal_id": 456,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_conversion_rate_by_source_and_landing.json](../../schemas/get_metrika_conversion_rate_by_source_and_landing.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_custom_query.md
+
+# get_metrika_custom_query
+
+Run a custom query against the connected Yandex Metrika reporting API using metrics, dimensions and filters.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Use this when a specialized Metrika tool does not cover the question. Up to 20 metrics, 10 dimensions, 5 sort fields and 1,000 rows are allowed. offset starts at 1. Filters use Yandex Metrika API syntax; descending sort uses a leading minus sign.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `metrics`: required; array of string. minimum items: 1; maximum items: 20. Yandex Metrika metric names.
+- `dimensions`: optional; array of string or null. Schema default: `null`. maximum items: 10. Yandex Metrika dimension names.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `filters`: optional; string or null. Schema default: `null`. Yandex Metrika API filter expression.
+- `sort`: optional; array of string. Schema default: `[]`. minimum items: 0; maximum items: 5. Sort specification; its shape and allowed fields differ by tool.
+- `limit`: optional; integer. Schema default: `100`. maximum: 1000; greater than: 0. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer. Schema default: `1`. minimum: 1. Starting offset; follow this tool's minimum and default.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_custom_query",
+    "arguments": {
+      "project_id": 123,
+      "metrics": [
+        "ym:s:visits",
+        "ym:s:users"
+      ],
+      "dimensions": [
+        "ym:s:startURL"
+      ],
+      "filters": "ym:s:trafficSource=='organic'",
+      "sort": [
+        "-ym:s:visits"
+      ],
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20,
+      "offset": 1
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_custom_query.json](../../schemas/get_metrika_custom_query.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_data_by_time.md
+
+# get_metrika_data_by_time
+
+Retrieve Yandex Metrika metrics grouped by a time interval.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+metrics are required. Use the captured group enum to select a time aggregation and timezone when needed.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `metrics`: required; array of string. Yandex Metrika metric names.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `dimensions`: optional; array of string or null. Schema default: `null`. Yandex Metrika dimension names.
+- `group`: optional; "day" | "week" | "month" | "quarter" | "year". Schema default: `"day"`. Time grouping for a Metrika time series.
+- `top_keys`: optional; integer. Schema default: `7`. Number of dimension keys selected for a time-series report.
+- `timezone`: optional; string or null. Schema default: `null`. Time zone used for the requested report.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_data_by_time",
+    "arguments": {
+      "project_id": 123,
+      "metrics": [
+        "ym:s:visits"
+      ],
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_data_by_time.json](../../schemas/get_metrika_data_by_time.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_geographical_organic_traffic.md
+
+# get_metrika_geographical_organic_traffic
+
+Retrieve the geographical distribution of organic traffic in Yandex Metrika.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `sort`: optional; array of string. Schema default: `[]`. minimum items: 0; maximum items: 5. Sort specification; its shape and allowed fields differ by tool.
+- `limit`: optional; integer. Schema default: `100`. maximum: 1000; greater than: 0. Maximum rows or records requested for this page of results.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_geographical_organic_traffic",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_geographical_organic_traffic.json](../../schemas/get_metrika_geographical_organic_traffic.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_goals.md
+
+# get_metrika_goals
+
+List goals from the project's connected Yandex Metrika counter.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `use_deleted`: optional; boolean. Schema default: `false`. Include deleted Metrika goals when requested.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_goals",
+    "arguments": {
+      "project_id": 123
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_goals.json](../../schemas/get_metrika_goals.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_goals_conversion.md
+
+# get_metrika_goals_conversion
+
+Retrieve user counts and conversion rates for selected Yandex Metrika goals.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `goal_ids`: required; array of integer. Metrika goal IDs from get_metrika_goals.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `sort`: optional; array of string. Schema default: `[]`. minimum items: 0; maximum items: 5. Sort specification; its shape and allowed fields differ by tool.
+- `limit`: optional; integer. Schema default: `100`. maximum: 1000; greater than: 0. Maximum rows or records requested for this page of results.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_goals_conversion",
+    "arguments": {
+      "project_id": 123,
+      "goal_ids": [
+        456
+      ],
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_goals_conversion.json](../../schemas/get_metrika_goals_conversion.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_mobile_vs_desktop.md
+
+# get_metrika_mobile_vs_desktop
+
+Compare mobile and desktop traffic and engagement in Yandex Metrika.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `sort`: optional; array of string. Schema default: `[]`. minimum items: 0; maximum items: 5. Sort specification; its shape and allowed fields differ by tool.
+- `limit`: optional; integer. Schema default: `100`. maximum: 1000; greater than: 0. Maximum rows or records requested for this page of results.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_mobile_vs_desktop",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_mobile_vs_desktop.json](../../schemas/get_metrika_mobile_vs_desktop.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_page_depth_analysis.md
+
+# get_metrika_page_depth_analysis
+
+Retrieve sessions with more than the selected number of page views from Yandex Metrika.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `min_pages`: optional; integer. Schema default: `5`. Page-depth threshold used by the Metrika report.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_page_depth_analysis",
+    "arguments": {
+      "project_id": 123,
+      "min_pages": 3,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_page_depth_analysis.json](../../schemas/get_metrika_page_depth_analysis.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_pages_report.md
+
+# get_metrika_pages_report
+
+Retrieve a Yandex Metrika page report with selected metrics, dimensions and filters.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+The default report is users and visits by starting page URL. Metric, dimension and filter names use the Yandex Metrika API vocabulary.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `metrics`: optional; array of string. Schema default: `["ym:s:users", "ym:s:visits"]`. minimum items: 1; maximum items: 20. Yandex Metrika metric names.
+- `dimensions`: optional; array of string or null. Schema default: `["ym:s:startURL"]`. maximum items: 10. Yandex Metrika dimension names.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `sort`: optional; array of string. Schema default: `[]`. minimum items: 0; maximum items: 5. Sort specification; its shape and allowed fields differ by tool.
+- `limit`: optional; integer. Schema default: `15`. maximum: 100; greater than: 0. Maximum rows or records requested for this page of results.
+- `filters`: optional; string or null. Schema default: `null`. Yandex Metrika API filter expression.
+- `goal_ids`: optional; array of integer or null. Schema default: `null`. maximum items: 10. Metrika goal IDs from get_metrika_goals.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_pages_report",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_pages_report.json](../../schemas/get_metrika_pages_report.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_search_engines_data.md
+
+# get_metrika_search_engines_data
+
+Retrieve search-engine sessions and users from Yandex Metrika with optional visitor filters.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `exclude_robots`: optional; boolean. Schema default: `false`. Exclude robot traffic from the Metrika report.
+- `new_users_only`: optional; boolean. Schema default: `false`. Restrict the Metrika report to new users.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `sort`: optional; array of string. Schema default: `[]`. minimum items: 0; maximum items: 5. Sort specification; its shape and allowed fields differ by tool.
+- `limit`: optional; integer. Schema default: `100`. maximum: 1000; greater than: 0. Maximum rows or records requested for this page of results.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_search_engines_data",
+    "arguments": {
+      "project_id": 123,
+      "exclude_robots": true,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_search_engines_data.json](../../schemas/get_metrika_search_engines_data.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_sources_summary.md
+
+# get_metrika_sources_summary
+
+Retrieve a Yandex Metrika traffic-source summary.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `sort`: optional; array of string. Schema default: `[]`. minimum items: 0; maximum items: 5. Sort specification; its shape and allowed fields differ by tool.
+- `limit`: optional; integer. Schema default: `100`. maximum: 1000; greater than: 0. Maximum rows or records requested for this page of results.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_sources_summary",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_sources_summary.json](../../schemas/get_metrika_sources_summary.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_metrika_visits.md
+
+# get_metrika_visits
+
+Retrieve visit data from the project's connected Yandex Metrika counter.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+This report requires a project with a connected Yandex Metrika counter. Most report tools use the last seven days when dates are omitted; goal listing does not take report dates.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_metrika_visits",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [get_metrika_visits.json](../../schemas/get_metrika_visits.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_page_content.md
+
+# get_page_content
+
+Extract a public page as Markdown, HTML, or a compact metadata-and-headings structure.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+format=md and format=html return page content. format=structure returns metadata, a heading outline and statistics without the page body. Use structure for a compact initial review of several pages.
+
+## Arguments
+
+- `page_url`: required; string. Full URL of the page to inspect.
+- `format`: optional; "md" | "html" | "structure". Schema default: `"md"`. Page extraction format: md, html or structure.
+- `delete_links`: optional; boolean. Schema default: `false`. Remove links from extracted page content when true.
+- `delete_images`: optional; boolean. Schema default: `false`. Remove images from extracted page content when true.
+- `length`: optional; integer. Schema default: `0`. Character range length, or page extraction length control.
+- `headings_max_level`: optional; integer. Schema default: `3`. minimum: 1; maximum: 6. Deepest heading level to retain in the structure response.
+- `max_headings`: optional; integer. Schema default: `200`. minimum: 1; maximum: 1000. Maximum heading count in a structure response.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_page_content",
+    "arguments": {
+      "page_url": "https://example.com/",
+      "format": "structure"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `task_id`: string; required in the output schema.
+- `text_in_markdown`: string or null; optional in the output schema.
+- `html_code`: string or null; optional in the output schema.
+- `meta`: object or null; optional in the output schema.
+- `outline`: array of object or null; optional in the output schema.
+- `stats`: object or null; optional in the output schema.
+
+The complete input and output schemas are in [get_page_content.json](../../schemas/get_page_content.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_page_screenshot.md
+
+# get_page_screenshot
+
+Capture a public-page screenshot using a selected device type.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+device_type uses smartphone, tablet and desktop. This differs from the mobile value accepted by SERP tools. The captured default is tablet.
+
+## Arguments
+
+- `page_url`: required; string. Full URL of the page to inspect.
+- `full_page`: optional; boolean. Schema default: `false`. Capture the complete page when true.
+- `device_type`: optional; "smartphone" | "tablet" | "desktop". Schema default: `"tablet"`. Screenshot device type.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_page_screenshot",
+    "arguments": {
+      "page_url": "https://example.com/",
+      "device_type": "desktop",
+      "full_page": true
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `task_id`: string; required in the output schema.
+- `screenshot_url`: string or null; required in the output schema.
+- `page_url`: string or null; required in the output schema.
+
+The complete input and output schemas are in [get_page_screenshot.json](../../schemas/get_page_screenshot.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_pages_summary.md
+
+# get_pages_summary
+
+Retrieve page search-performance summaries from Google Search Console and Yandex Webmaster.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Requires connected GSC or Yandex Webmaster data. Dates must be no later than three days before the current date. A comparison requires both previous-period dates. URL filtering is an object with value and optional compare_type, default contains. Sorting uses a comma-separated string; a leading minus sign means descending.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `source`: optional; "gsc" | "webmaster" | "all". Schema default: `"all"`. Search-performance data source.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `prev_date_from`: optional; string or null. Schema default: `null`. Start of the comparison period; pair with prev_date_to.
+- `prev_date_to`: optional; string or null. Schema default: `null`. End of the comparison period; pair with prev_date_from.
+- `url`: optional; object with string values or null. Schema default: `null`. Search-performance URL filter object.
+- `metrics_filter`: optional; object with object with integer or number values values or null. Schema default: `null`. Metric-range filter object in the search-performance report.
+- `sort`: optional; string or null. Schema default: `"-impressions"`. Sort specification; its shape and allowed fields differ by tool.
+- `limit`: optional; integer or null. Schema default: `null`. greater than: 0. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer or null. Schema default: `null`. minimum: 0. Starting offset; follow this tool's minimum and default.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_pages_summary",
+    "arguments": {
+      "project_id": 123,
+      "source": "gsc",
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "url": {
+        "value": "/blog/",
+        "compare_type": "contains"
+      },
+      "limit": 20
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [get_pages_summary.json](../../schemas/get_pages_summary.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_pages_summary_by_dates.md
+
+# get_pages_summary_by_dates
+
+Retrieve historical clicks, impressions and positions grouped by day, week or month.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Requires connected search-performance data. Dates must be no later than three days before the current date. This tool has no source input in the captured schema. period is day, week or month.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `period`: optional; "day" | "week" | "month". Schema default: `"day"`. Date grouping for search-performance history.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `url`: optional; object with string values or null. Schema default: `null`. Search-performance URL filter object.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_pages_summary_by_dates",
+    "arguments": {
+      "project_id": 123,
+      "period": "day",
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [get_pages_summary_by_dates.json](../../schemas/get_pages_summary_by_dates.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_position.md
+
+# get_position
+
+Retrieve a domain's search ranking for several comma-separated keyword phrases in one request.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Batch phrases in a single comma-separated keywords string. Use domain, not page_url. The captured engine and top enum values are listed below.
+
+## Arguments
+
+- `keywords`: required; string. Comma-separated keyword phrases.
+- `domain`: required; string. Project or target domain, such as example.com.
+- `engine`: optional; "google" | "yandexLive". Schema default: `"google"`. Search engine identifier supported by this tool.
+- `device`: optional; "desktop" | "mobile". Schema default: `"desktop"`. Device category supported by this tool.
+- `top`: optional; 10 | 20 | 50 | 100. Schema default: `10`. Maximum search-result or ranking depth.
+- `region`: optional; integer or null. Schema default: `null`. Search region, or the region name for get_region.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_position",
+    "arguments": {
+      "keywords": "buy laptop, gaming laptop",
+      "domain": "example.com",
+      "engine": "google",
+      "device": "desktop",
+      "top": 100
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `task_id`: string; required in the output schema.
+- `engine`: string; required in the output schema.
+- `keywords_positions`: array of object or null; required in the output schema.
+
+The complete input and output schemas are in [get_position.json](../../schemas/get_position.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_project_events.md
+
+# get_project_events
+
+Retrieve project timeline events for indexing, SSL, robots.txt, analytics and crawler-audit changes.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Uses a domain, not project_id. Events are newest first and cannot be re-sorted. date_from is inclusive and date_to exclusive. Follow has_more even when fewer than limit events are returned. total_events_count is measured before exclusions. Event text uses the account language.
+
+## Arguments
+
+- `domain`: required; string. minimum text length: 1. Project or target domain, such as example.com.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `exclude_events`: optional; array of "crawlerPagesChanged:canonicalFromHeader" | "crawlerPagesChanged:canonicalFromHtml" | "crawlerPagesChanged:description" | "crawlerPagesChanged:h1Content" | "crawlerPagesChanged:textLength" | "crawlerPagesChanged:noIndexHttp" | "crawlerPagesChanged:noIndexMeta" | "crawlerPagesChanged:noIndexRobots" | "crawlerPagesChanged:statusCode" | "expiration:future" | "expiration:past" | "expiration:soon" | "ga:connected" | "ga:disconnected" | "googleSafeBrowsing:no" | "googleSafeBrowsing:yes" | "gsc:connected" | "gsc:disconnected" | "note:created" | "pageSpeedConfigureViewport:no" | "pageSpeedConfigureViewport:yes" | "roskomnadzor:domainForbidden" | "roskomnadzor:domainPardoned" | "sitemap:exist" | "sitemap:notExist" | "todo:checked" | "todo:unchecked" | "webmaster:connected" | "webmaster:disconnected" | "weekReportStats:ga" | "wwwRedirect:exist" | "wwwRedirect:notExist" | "yandexIndex:indexed" | "yandexIndex:notIndexed" | "yandexSafeBrowsing:no" | "yandexSafeBrowsing:yes" | "crawlerPagesChanged:title" | "googleIndex:indexed" | "googleIndex:notIndexed" | "metrika:connected" | "metrika:disconnected" | "robotsTxt:allowed" | "robotsTxt:change" | "robotsTxt:disallowed" | "robotsTxt:exist" | "robotsTxt:notExist" | "ssl:exist" | "ssl:expired" | "ssl:notExist" | "ssl:renewed" | "ssl:soon_expire" | "yandexSqi:decreased" | "yandexSqi:increased" | "googleGlue:glued" | "googleGlue:notGlued" | "googleNews:exist" | "googleNews:notExist" | "httpStatusCode:siteRecovered" | "httpStatusCode:siteSick" | "keywordsGroupInTop10:decreased" | "keywordsGroupInTop10:increased" | "keywordsHistoryImport:done" | "keywordsInTop10:decreased" | "keywordsInTop10:increased" | "llmsTxt:exist" | "mailruCatalog:exist" | "mailruCatalog:notExist" | "organicSummary:changed" | "organicTopPages:clicksDecreased" | "organicTopPages:clicksIncreased" | "webArchive:exist" | "webmasterProblems:added" | "webmasterProblems:deleted" | "webmasterSearchablePagesCount:decreased" | "webmasterSearchablePagesCount:increased" | "weekReportStats:metrika" | "yandexAgs:sanctionsImposed" | "yandexAgs:sanctionsRemoved" | "yandexCatalog:exist" | "yandexCatalog:notExist" | "yandexGlue:glued" | "yandexGlue:notGlued" or null. Schema default: `null`. Event types excluded from the returned project timeline.
+- `limit`: optional; integer. Schema default: `10`. minimum: 1; maximum: 500. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer. Schema default: `0`. minimum: 0. Starting offset; follow this tool's minimum and default.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_project_events",
+    "arguments": {
+      "domain": "example.com",
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-21",
+      "limit": 20,
+      "offset": 0
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `events`: array of object; required in the output schema.
+- `total_events_count`: integer; required in the output schema.
+- `has_more`: boolean; required in the output schema.
+
+The complete input and output schemas are in [get_project_events.json](../../schemas/get_project_events.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_project_keyword_groups.md
+
+# get_project_keyword_groups
+
+List keyword groups in a PR-CY project.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_project_keyword_groups",
+    "arguments": {
+      "project_id": 123
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [get_project_keyword_groups.json](../../schemas/get_project_keyword_groups.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_project_notes.md
+
+# get_project_notes
+
+Retrieve user-created project notes for an inclusive date range.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Both date boundaries are inclusive. Results are newest first; deleted notes are not returned. Pagination is applied after the upstream period list is fetched, so narrowing dates reduces upstream work. Note deletion is not exposed.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `date_from`: optional; string or null. Schema default: `null`. Start of the requested reporting or change period.
+- `date_to`: optional; string or null. Schema default: `null`. End of the requested period; inclusivity depends on the tool.
+- `limit`: optional; integer. Schema default: `50`. minimum: 1; maximum: 500. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer. Schema default: `0`. minimum: 0. Starting offset; follow this tool's minimum and default.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_project_notes",
+    "arguments": {
+      "project_id": 123,
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-20",
+      "limit": 20,
+      "offset": 0
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `notes`: array of object; required in the output schema.
+- `total`: integer; required in the output schema.
+- `has_more`: boolean; required in the output schema.
+
+The complete input and output schemas are in [get_project_notes.json](../../schemas/get_project_notes.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_region.md
+
+# get_region
+
+Resolve region names to region IDs for a selected search engine.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+The accepted engines are yandex, google and yandexLive. Use a region ID returned for the engine used by the subsequent request.
+
+## Arguments
+
+- `engine`: required; "yandex" | "google" | "yandexLive". Search engine identifier supported by this tool.
+- `region`: required; string. Search region, or the region name for get_region.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_region",
+    "arguments": {
+      "engine": "yandexLive",
+      "region": "Moscow"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [get_region.json](../../schemas/get_region.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_serp.md
+
+# get_serp
+
+Retrieve search results for one keyword from Google or live Yandex search.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+engine accepts google and yandexLive. language is fixed to ru. top accepts 10, 20, 50 or 100. with_related_values can request additional related data.
+
+## Arguments
+
+- `keyword`: required; string. Keyword phrase.
+- `engine`: optional; "google" | "yandexLive". Schema default: `"google"`. Search engine identifier supported by this tool.
+- `language`: optional; "ru". Schema default: `"ru"`. Search-interface language; the captured SERP schema fixes this to ru.
+- `device`: optional; "desktop" | "mobile". Schema default: `"desktop"`. Device category supported by this tool.
+- `top`: optional; 10 | 20 | 50 | 100. Schema default: `10`. Maximum search-result or ranking depth.
+- `region`: optional; integer or null. Schema default: `null`. Search region, or the region name for get_region.
+- `with_related_values`: optional; boolean. Schema default: `false`. Include related values in a SERP response.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_serp",
+    "arguments": {
+      "keyword": "buy laptop",
+      "engine": "google",
+      "device": "desktop",
+      "top": 10
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `task_id`: string; required in the output schema.
+- `serp`: array of object; required in the output schema.
+- `related_questions`: array of object or null; optional in the output schema.
+- `related_searches`: array of object or null; optional in the output schema.
+
+The complete input and output schemas are in [get_serp.json](../../schemas/get_serp.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_user_keywords_projects.md
+
+# get_user_keywords_projects
+
+List keyword-ranking projects and their search-engine, language, region and device settings.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Use the returned search-settings IDs rather than constructing a search_options_id from a region or device.
+
+## Arguments
+
+- `project_id`: optional; integer or null. Schema default: `null`. greater than: 0. Project ID from project discovery.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_user_keywords_projects",
+    "arguments": {}
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [get_user_keywords_projects.json](../../schemas/get_user_keywords_projects.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_user_limits.md
+
+# get_user_limits
+
+Retrieve selected limits for the connected PR-CY account or project.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+limits_filter must be non-empty. competitorsAnalysis requires project_id. The captured schema default includes that project-specific limit, so use an explicit project-independent filter for account checks.
+
+## Arguments
+
+- `limits_filter`: optional; array of "checks" | "competitorsAnalysis" | "forceCrawlerUpdates" | "pdfReports" | "projects" | "projectsDaily" | "standardAnalysis" | "teams". Schema default: `["checks", "competitorsAnalysis", "forceCrawlerUpdates", "pdfReports", "projects", "projectsDaily", "standardAnalysis", "teams"]`. Non-empty list of limit names; competitorsAnalysis needs a project.
+- `project_id`: optional; integer or null. Schema default: `null`. greater than: 0. Project ID from project discovery.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_user_limits",
+    "arguments": {
+      "limits_filter": [
+        "checks",
+        "standardAnalysis"
+      ]
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [get_user_limits.json](../../schemas/get_user_limits.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_user_project.md
+
+# get_user_project
+
+Retrieve a PR-CY project by its numeric project ID.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_user_project",
+    "arguments": {
+      "project_id": 123
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `id`: integer; required in the output schema.
+- `domain`: string; required in the output schema.
+- `status`: "active" | "hold" | "deleted"; required in the output schema.
+- `initialized_advanced`: boolean; required in the output schema.
+- `initialized_crawler`: boolean; required in the output schema.
+- `initialized_keywords`: boolean; required in the output schema.
+- `advanced_auto_update`: boolean; required in the output schema.
+- `crawler_auto_update`: boolean; required in the output schema.
+- `week_report`: boolean; required in the output schema.
+- `requests_per_second`: integer; required in the output schema.
+- `use_robots_txt`: boolean; required in the output schema.
+- `crawler_mode`: array of "crawler" | "sitemap" | "userLinks"; required in the output schema.
+- `crawler_user_links`: array of string; required in the output schema.
+- `robot_type`: "*" | "Googlebot" | "Yandex" | "PR-CY-BOT"; required in the output schema.
+- `crawler_restrict_rules`: array of string; required in the output schema.
+- `allow_subdomains_in_serp`: boolean; required in the output schema.
+- `ignore_wordstat_region`: boolean; required in the output schema.
+- `wordstat_type`: "general" | "quoted" | "exact"; required in the output schema.
+- `date_created`: string; required in the output schema.
+- `ga_connected`: boolean or null; required in the output schema.
+- `gsc_connected`: boolean or null; required in the output schema.
+- `metrika_connected`: boolean or null; required in the output schema.
+- `webmaster_connected`: boolean or null; required in the output schema.
+- `enabled_timeline_events`: array of "crawlerPagesChanged:canonicalFromHeader" | "crawlerPagesChanged:canonicalFromHtml" | "crawlerPagesChanged:description" | "crawlerPagesChanged:h1Content" | "crawlerPagesChanged:textLength" | "crawlerPagesChanged:noIndexHttp" | "crawlerPagesChanged:noIndexMeta" | "crawlerPagesChanged:noIndexRobots" | "crawlerPagesChanged:statusCode" | "expiration:future" | "expiration:past" | "expiration:soon" | "ga:connected" | "ga:disconnected" | "googleSafeBrowsing:no" | "googleSafeBrowsing:yes" | "gsc:connected" | "gsc:disconnected" | "note:created" | "pageSpeedConfigureViewport:no" | "pageSpeedConfigureViewport:yes" | "roskomnadzor:domainForbidden" | "roskomnadzor:domainPardoned" | "sitemap:exist" | "sitemap:notExist" | "todo:checked" | "todo:unchecked" | "webmaster:connected" | "webmaster:disconnected" | "weekReportStats:ga" | "wwwRedirect:exist" | "wwwRedirect:notExist" | "yandexIndex:indexed" | "yandexIndex:notIndexed" | "yandexSafeBrowsing:no" | "yandexSafeBrowsing:yes" | "crawlerPagesChanged:title" | "googleIndex:indexed" | "googleIndex:notIndexed" | "metrika:connected" | "metrika:disconnected" | "robotsTxt:allowed" | "robotsTxt:change" | "robotsTxt:disallowed" | "robotsTxt:exist" | "robotsTxt:notExist" | "ssl:exist" | "ssl:expired" | "ssl:notExist" | "ssl:renewed" | "ssl:soon_expire" | "yandexSqi:decreased" | "yandexSqi:increased" | "googleGlue:glued" | "googleGlue:notGlued" | "googleNews:exist" | "googleNews:notExist" | "httpStatusCode:siteRecovered" | "httpStatusCode:siteSick" | "keywordsGroupInTop10:decreased" | "keywordsGroupInTop10:increased" | "keywordsHistoryImport:done" | "keywordsInTop10:decreased" | "keywordsInTop10:increased" | "llmsTxt:exist" | "mailruCatalog:exist" | "mailruCatalog:notExist" | "organicSummary:changed" | "organicTopPages:clicksDecreased" | "organicTopPages:clicksIncreased" | "webArchive:exist" | "webmasterProblems:added" | "webmasterProblems:deleted" | "webmasterSearchablePagesCount:decreased" | "webmasterSearchablePagesCount:increased" | "weekReportStats:metrika" | "yandexAgs:sanctionsImposed" | "yandexAgs:sanctionsRemoved" | "yandexCatalog:exist" | "yandexCatalog:notExist" | "yandexGlue:glued" | "yandexGlue:notGlued" or null; required in the output schema.
+- `additional_timeline_events_emails`: array of string or null; required in the output schema.
+- `base_analytic_system`: "ga" | "gsc" | "metrika" | "webmaster"; required in the output schema.
+
+The complete input and output schemas are in [get_user_project.json](../../schemas/get_user_project.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_user_project_by_domain.md
+
+# get_user_project_by_domain
+
+Retrieve a PR-CY project by its domain.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `domain`: required; string. Project or target domain, such as example.com.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_user_project_by_domain",
+    "arguments": {
+      "domain": "example.com"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `id`: integer; required in the output schema.
+- `domain`: string; required in the output schema.
+- `status`: "active" | "hold" | "deleted"; required in the output schema.
+- `initialized_advanced`: boolean; required in the output schema.
+- `initialized_crawler`: boolean; required in the output schema.
+- `initialized_keywords`: boolean; required in the output schema.
+- `advanced_auto_update`: boolean; required in the output schema.
+- `crawler_auto_update`: boolean; required in the output schema.
+- `week_report`: boolean; required in the output schema.
+- `requests_per_second`: integer; required in the output schema.
+- `use_robots_txt`: boolean; required in the output schema.
+- `crawler_mode`: array of "crawler" | "sitemap" | "userLinks"; required in the output schema.
+- `crawler_user_links`: array of string; required in the output schema.
+- `robot_type`: "*" | "Googlebot" | "Yandex" | "PR-CY-BOT"; required in the output schema.
+- `crawler_restrict_rules`: array of string; required in the output schema.
+- `allow_subdomains_in_serp`: boolean; required in the output schema.
+- `ignore_wordstat_region`: boolean; required in the output schema.
+- `wordstat_type`: "general" | "quoted" | "exact"; required in the output schema.
+- `date_created`: string; required in the output schema.
+- `ga_connected`: boolean or null; required in the output schema.
+- `gsc_connected`: boolean or null; required in the output schema.
+- `metrika_connected`: boolean or null; required in the output schema.
+- `webmaster_connected`: boolean or null; required in the output schema.
+- `enabled_timeline_events`: array of "crawlerPagesChanged:canonicalFromHeader" | "crawlerPagesChanged:canonicalFromHtml" | "crawlerPagesChanged:description" | "crawlerPagesChanged:h1Content" | "crawlerPagesChanged:textLength" | "crawlerPagesChanged:noIndexHttp" | "crawlerPagesChanged:noIndexMeta" | "crawlerPagesChanged:noIndexRobots" | "crawlerPagesChanged:statusCode" | "expiration:future" | "expiration:past" | "expiration:soon" | "ga:connected" | "ga:disconnected" | "googleSafeBrowsing:no" | "googleSafeBrowsing:yes" | "gsc:connected" | "gsc:disconnected" | "note:created" | "pageSpeedConfigureViewport:no" | "pageSpeedConfigureViewport:yes" | "roskomnadzor:domainForbidden" | "roskomnadzor:domainPardoned" | "sitemap:exist" | "sitemap:notExist" | "todo:checked" | "todo:unchecked" | "webmaster:connected" | "webmaster:disconnected" | "weekReportStats:ga" | "wwwRedirect:exist" | "wwwRedirect:notExist" | "yandexIndex:indexed" | "yandexIndex:notIndexed" | "yandexSafeBrowsing:no" | "yandexSafeBrowsing:yes" | "crawlerPagesChanged:title" | "googleIndex:indexed" | "googleIndex:notIndexed" | "metrika:connected" | "metrika:disconnected" | "robotsTxt:allowed" | "robotsTxt:change" | "robotsTxt:disallowed" | "robotsTxt:exist" | "robotsTxt:notExist" | "ssl:exist" | "ssl:expired" | "ssl:notExist" | "ssl:renewed" | "ssl:soon_expire" | "yandexSqi:decreased" | "yandexSqi:increased" | "googleGlue:glued" | "googleGlue:notGlued" | "googleNews:exist" | "googleNews:notExist" | "httpStatusCode:siteRecovered" | "httpStatusCode:siteSick" | "keywordsGroupInTop10:decreased" | "keywordsGroupInTop10:increased" | "keywordsHistoryImport:done" | "keywordsInTop10:decreased" | "keywordsInTop10:increased" | "llmsTxt:exist" | "mailruCatalog:exist" | "mailruCatalog:notExist" | "organicSummary:changed" | "organicTopPages:clicksDecreased" | "organicTopPages:clicksIncreased" | "webArchive:exist" | "webmasterProblems:added" | "webmasterProblems:deleted" | "webmasterSearchablePagesCount:decreased" | "webmasterSearchablePagesCount:increased" | "weekReportStats:metrika" | "yandexAgs:sanctionsImposed" | "yandexAgs:sanctionsRemoved" | "yandexCatalog:exist" | "yandexCatalog:notExist" | "yandexGlue:glued" | "yandexGlue:notGlued" or null; required in the output schema.
+- `additional_timeline_events_emails`: array of string or null; required in the output schema.
+- `base_analytic_system`: "ga" | "gsc" | "metrika" | "webmaster"; required in the output schema.
+
+The complete input and output schemas are in [get_user_project_by_domain.json](../../schemas/get_user_project_by_domain.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_user_projects.md
+
+# get_user_projects
+
+List PR-CY projects available to the connected account.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+No arguments are required. Pass an empty object.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_user_projects",
+    "arguments": {}
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [get_user_projects.json](../../schemas/get_user_projects.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/get_wordstat.md
+
+# get_wordstat
+
+Retrieve estimated monthly keyword demand, related phrases, including phrases and optional seasonality across regions and accuracy types.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Batch phrases in one comma-separated keywords string. Up to five regions and several types can be requested. general is broad demand; quoted fixes phrase word count while allowing word forms; exact keeps word forms without fixing word order. A null region item means unrestricted geography; the captured omitted-region default is Russia. Prefer types and regions over legacy type and region. Seasonality needs start and end and supports up to 24 months. No engine parameter is advertised in this captured live schema.
+
+## Arguments
+
+- `keywords`: required; string. Comma-separated keyword phrases.
+- `types`: optional; array of "general" | "quoted" | "exact" or null. Schema default: `null`. Keyword-demand accuracy types.
+- `regions`: optional; array of integer or null or null. Schema default: `null`. Keyword-demand region IDs; a null item means unrestricted geography.
+- `need_related_phrases`: optional; boolean. Schema default: `true`. Include related keyword phrases.
+- `need_including_phrases`: optional; boolean. Schema default: `true`. Include phrases containing the requested keyword.
+- `seasonality`: optional; object or null. Schema default: `null`. Optional keyword-demand history request with start and end months.
+- `type`: optional; "general" | "quoted" | "exact" or null. Schema default: `null`. Legacy single accuracy type; prefer types.
+- `region`: optional; integer or null. Schema default: `null`. Legacy single region ID; prefer regions.
+
+### WordstatSeasonalityRequest
+
+- `start`: required; string. Starting character offset for an artifact range, or seasonality start month.
+- `end`: required; string. Seasonality end month.
+- `device`: optional; "desktop" | "mobile" or null. Schema default: `null`. Device category supported by this tool.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_wordstat",
+    "arguments": {
+      "keywords": "buy laptop, gaming laptop",
+      "types": [
+        "general",
+        "exact"
+      ],
+      "regions": [
+        213
+      ],
+      "need_related_phrases": true
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `task_id`: string; required in the output schema.
+- `regions`: array of object; required in the output schema.
+- `types`: array of string; required in the output schema.
+- `items`: array of object; required in the output schema.
+- `seasonality`: array of object or null; optional in the output schema.
+- `seasonality_months`: array of string or null; optional in the output schema.
+- `seasonality_device`: string or null; optional in the output schema.
+
+The complete input and output schemas are in [get_wordstat.json](../../schemas/get_wordstat.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/index.md
+
+# PR-CY MCP tool reference
+
+The live server advertised 69 tools on 2026-10-27 (analysis 1.30.0). Each page documents input types, required fields, enum values, defaults, behavioral limits, a JSON-RPC example and the output schema.
+
+Examples use demonstration identifiers. Resolve real IDs using the appropriate discovery tools. Use the live tools/list response for newer server versions.
+
+## Account and projects
+
+- [get_user_limits](get_user_limits.md): Retrieve selected limits for the connected PR-CY account or project.
+- [get_user_project](get_user_project.md): Retrieve a PR-CY project by its numeric project ID.
+- [get_user_project_by_domain](get_user_project_by_domain.md): Retrieve a PR-CY project by its domain.
+- [get_user_projects](get_user_projects.md): List PR-CY projects available to the connected account.
+- [get_user_keywords_projects](get_user_keywords_projects.md): List keyword-ranking projects and their search-engine, language, region and device settings.
+
+## Keywords and project rankings
+
+- [get_keywords](get_keywords.md): List project keywords, keyword groups and target URLs.
+- [create_keywords](create_keywords.md): Add a batch of keywords to a project, with optional target URLs and group assignments.
+- [delete_keywords](delete_keywords.md): Delete selected keywords by their numeric keyword IDs.
+- [update_keywords_status](update_keywords_status.md): Set selected project keywords to active or hold.
+- [check_positions](check_positions.md): Launch a project keyword-ranking check for one or all active search settings.
+- [get_keywords_summaries](get_keywords_summaries.md): Retrieve project keyword summaries for a selected search setting.
+- [get_keywords_positions_history](get_keywords_positions_history.md): Retrieve historical project keyword rankings for a selected search setting.
+
+## Keyword groups
+
+- [get_project_keyword_groups](get_project_keyword_groups.md): List keyword groups in a PR-CY project.
+- [create_keyword_group](create_keyword_group.md): Create a named keyword group in a project.
+- [delete_keyword_group](delete_keyword_group.md): Delete a keyword group by its group ID.
+- [update_group_keywords](update_group_keywords.md): Update the assignment of keyword IDs to a keyword group.
+
+## Search and keyword demand
+
+- [get_wordstat](get_wordstat.md): Retrieve estimated monthly keyword demand, related phrases, including phrases and optional seasonality across regions and accuracy types.
+- [get_region](get_region.md): Resolve region names to region IDs for a selected search engine.
+- [get_serp](get_serp.md): Retrieve search results for one keyword from Google or live Yandex search.
+- [get_position](get_position.md): Retrieve a domain's search ranking for several comma-separated keyword phrases in one request.
+- [get_keywords_by_url](get_keywords_by_url.md): Retrieve keywords associated with a page URL.
+
+## Crawler audits
+
+- [get_crawler_analysis_summary](get_crawler_analysis_summary.md): Retrieve the latest crawler-audit summary, health score, issue counts and optional history.
+- [get_crawler_pages](get_crawler_pages.md): List audited website pages with full page checks and combined issue filters.
+- [get_changed_crawler_pages](get_changed_crawler_pages.md): Find audited pages whose selected tracked field changed during a date range.
+
+## Search Console and Webmaster
+
+- [get_keywords_pages_summary](get_keywords_pages_summary.md): Retrieve keyword and page search-performance summaries from Google Search Console and Yandex Webmaster.
+- [get_pages_summary](get_pages_summary.md): Retrieve page search-performance summaries from Google Search Console and Yandex Webmaster.
+- [get_pages_summary_by_dates](get_pages_summary_by_dates.md): Retrieve historical clicks, impressions and positions grouped by day, week or month.
+
+## Yandex Metrika
+
+- [get_metrika_visits](get_metrika_visits.md): Retrieve visit data from the project's connected Yandex Metrika counter.
+- [get_metrika_goals](get_metrika_goals.md): List goals from the project's connected Yandex Metrika counter.
+- [get_metrika_sources_summary](get_metrika_sources_summary.md): Retrieve a Yandex Metrika traffic-source summary.
+- [get_metrika_search_engines_data](get_metrika_search_engines_data.md): Retrieve search-engine sessions and users from Yandex Metrika with optional visitor filters.
+- [get_metrika_page_depth_analysis](get_metrika_page_depth_analysis.md): Retrieve sessions with more than the selected number of page views from Yandex Metrika.
+- [get_metrika_goals_conversion](get_metrika_goals_conversion.md): Retrieve user counts and conversion rates for selected Yandex Metrika goals.
+- [get_metrika_mobile_vs_desktop](get_metrika_mobile_vs_desktop.md): Compare mobile and desktop traffic and engagement in Yandex Metrika.
+- [get_metrika_geographical_organic_traffic](get_metrika_geographical_organic_traffic.md): Retrieve the geographical distribution of organic traffic in Yandex Metrika.
+- [get_metrika_data_by_time](get_metrika_data_by_time.md): Retrieve Yandex Metrika metrics grouped by a time interval.
+- [get_metrika_conversion_rate_by_source_and_landing](get_metrika_conversion_rate_by_source_and_landing.md): Retrieve conversion rates by traffic source and landing page for a Yandex Metrika goal.
+- [get_metrika_pages_report](get_metrika_pages_report.md): Retrieve a Yandex Metrika page report with selected metrics, dimensions and filters.
+- [get_metrika_custom_query](get_metrika_custom_query.md): Run a custom query against the connected Yandex Metrika reporting API using metrics, dimensions and filters.
+
+## Page content and images
+
+- [get_page_content](get_page_content.md): Extract a public page as Markdown, HTML, or a compact metadata-and-headings structure.
+- [get_page_screenshot](get_page_screenshot.md): Capture a public-page screenshot using a selected device type.
+- [generate_image](generate_image.md): Generate an image from a text prompt, optionally using reference-image URLs.
+
+## Project events and notes
+
+- [get_project_events](get_project_events.md): Retrieve project timeline events for indexing, SSL, robots.txt, analytics and crawler-audit changes.
+- [get_project_notes](get_project_notes.md): Retrieve user-created project notes for an inclusive date range.
+- [create_project_note](create_project_note.md): Create a dated project note documenting work on a website.
+- [update_project_note](update_project_note.md): Update selected fields of a project note and return the updated note.
+
+## Articles
+
+- [list_articles](list_articles.md): List the articles available to the connected user.
+- [create_article](create_article.md): Create an article with a name and optional initial blocks.
+- [get_article](get_article.md): Retrieve an article and, optionally, its block data.
+- [get_article_blocks](get_article_blocks.md): Retrieve article blocks matching substring and block-type filters, with optional neighboring context.
+- [count_article_blocks](count_article_blocks.md): Count article blocks matching substring and block-type filters without returning the blocks.
+- [delete_article](delete_article.md): Delete an article identified by its article ID.
+- [set_article_content](set_article_content.md): Replace an article body and remove its existing blocks.
+- [modify_article_blocks](modify_article_blocks.md): Apply ordered insert, modify, remove and move operations to article blocks.
+- [replace_article_text](replace_article_text.md): Find and replace text in article block data.text, data.code and data.caption fields.
+- [update_article_title](update_article_title.md): Change the name of an article.
+
+## HTML artifacts
+
+- [create_artifact](create_artifact.md): Create an HTML artifact and its initial draft.
+- [list_artifacts](list_artifacts.md): List HTML artifacts available to the connected user.
+- [read_artifact](read_artifact.md): Read the active artifact draft or a specified revision.
+- [search_artifact](search_artifact.md): Find text in an artifact revision and return match positions and a match count.
+- [overwrite_artifact](overwrite_artifact.md): Replace the content of the active artifact draft using its current revision ID.
+- [replace_range_in_artifact](replace_range_in_artifact.md): Replace a range of characters in an artifact draft using its current revision ID.
+- [replace_substring_in_artifact](replace_substring_in_artifact.md): Replace matching text in an artifact draft using its current revision ID.
+- [finalize_artifact](finalize_artifact.md): Finalize the active artifact draft as the next version.
+- [list_artifact_revisions](list_artifact_revisions.md): List revisions of an artifact.
+- [diff_artifact](diff_artifact.md): Compare two artifact revisions using a unified diff.
+- [revert_artifact](revert_artifact.md): Restore the active artifact draft from a selected revision.
+- [validate_artifact](validate_artifact.md): Validate the active artifact revision and report errors.
+- [set_artifact_persistent](set_artifact_persistent.md): Enable or disable persistent storage for a finalized artifact version.
+
+
+---
+
+Source document: docs/tools/list_articles.md
+
+# list_articles
+
+List the articles available to the connected user.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `limit`: optional; integer. Schema default: `10`. minimum: 1; maximum: 50. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer. Schema default: `0`. minimum: 0. Starting offset; follow this tool's minimum and default.
+- `sort`: optional; string. Schema default: `"-dateUpdated"`. Sort specification; its shape and allowed fields differ by tool.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "list_articles",
+    "arguments": {
+      "limit": 10,
+      "offset": 0,
+      "sort": "-dateUpdated"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `result`: array of object; required in the output schema.
+
+The complete input and output schemas are in [list_articles.json](../../schemas/list_articles.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/list_artifact_revisions.md
+
+# list_artifact_revisions
+
+List revisions of an artifact.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `artifact_id`: required; integer. greater than: 0. Artifact ID returned by artifact creation or listing.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "list_artifact_revisions",
+    "arguments": {
+      "artifact_id": 123
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `artifact`: object; required in the output schema.
+- `revisions`: array of object; required in the output schema.
+
+The complete input and output schemas are in [list_artifact_revisions.json](../../schemas/list_artifact_revisions.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/list_artifacts.md
+
+# list_artifacts
+
+List HTML artifacts available to the connected user.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `limit`: optional; integer. Schema default: `10`. minimum: 1; maximum: 100. Maximum rows or records requested for this page of results.
+- `offset`: optional; integer. Schema default: `0`. minimum: 0. Starting offset; follow this tool's minimum and default.
+- `title`: optional; string or null. Schema default: `null`. Artifact title or a title filter, depending on the tool.
+- `sort`: optional; "id" | "-id" | "title" | "-title". Schema default: `"id"`. Sort specification; its shape and allowed fields differ by tool.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "list_artifacts",
+    "arguments": {
+      "limit": 10,
+      "offset": 0
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `artifacts`: array of object; required in the output schema.
+- `total`: integer; required in the output schema.
+
+The complete input and output schemas are in [list_artifacts.json](../../schemas/list_artifacts.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/modify_article_blocks.md
+
+# modify_article_blocks
+
+Apply ordered insert, modify, remove and move operations to article blocks.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Operations run in order and address blocks by stable IDs. afterBlockId=null inserts or moves to the beginning. Otherwise, the affected block goes immediately after the selected block. Use at most 100 operations and 50 blocks per insert. The id inside a replacement block is overridden by blockId.
+
+## Arguments
+
+- `article_id`: required; string. minimum text length: 1. Article ID returned by article creation or listing.
+- `operations`: required; array of object. minimum items: 1. Ordered article-block edit operations.
+
+### InsertBlockOperation
+
+- `action`: optional; "insert". Schema default: `"insert"`. Article-block operation discriminator.
+- `afterBlockId`: optional; string or null. Schema default: `null`. Insert or move immediately after this block; null means the beginning.
+- `blocks`: required; array of object. minimum items: 1. Content blocks to insert.
+
+### ModifyBlockOperation
+
+- `action`: optional; "modify". Schema default: `"modify"`. Article-block operation discriminator.
+- `blockId`: required; string. minimum text length: 1. Stable ID of the block to modify or move.
+- `block`: required; object. Replacement content for a block.
+
+### MoveBlockOperation
+
+- `action`: optional; "move". Schema default: `"move"`. Article-block operation discriminator.
+- `blockId`: required; string. minimum text length: 1. Stable ID of the block to modify or move.
+- `afterBlockId`: optional; string or null. Schema default: `null`. Insert or move immediately after this block; null means the beginning.
+
+### RemoveBlockOperation
+
+- `action`: optional; "remove". Schema default: `"remove"`. Article-block operation discriminator.
+- `blockIds`: required; array of string. minimum items: 1. Stable IDs of blocks to remove.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "modify_article_blocks",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "operations": [
+        {
+          "action": "insert",
+          "afterBlockId": null,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "data": {
+                "text": "A laptop buying guide."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [modify_article_blocks.json](../../schemas/modify_article_blocks.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/overwrite_artifact.md
+
+# overwrite_artifact
+
+Replace the content of the active artifact draft using its current revision ID.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Use the current revision_id from a read or prior edit. Read again after a conflict. Large content is safer to build in smaller changes.
+
+## Arguments
+
+- `artifact_id`: required; integer. greater than: 0. Artifact ID returned by artifact creation or listing.
+- `revision_id`: required; integer. greater than: 0. Draft revision ID; use the current revision when guarding a write.
+- `content`: required; string. HTML draft content.
+- `created_by`: optional; "assistant" | "user". Schema default: `"assistant"`. Revision author category.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "overwrite_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "revision_id": 456,
+      "content": "<h1>Updated SEO report</h1>"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `revision`: object; required in the output schema.
+- `meta`: object or null; optional in the output schema.
+
+The complete input and output schemas are in [overwrite_artifact.json](../../schemas/overwrite_artifact.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/read_artifact.md
+
+# read_artifact
+
+Read the active artifact draft or a specified revision.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Omit revision_id to read the active revision. Obtain its current revision ID before write operations.
+
+## Arguments
+
+- `artifact_id`: required; integer. greater than: 0. Artifact ID returned by artifact creation or listing.
+- `revision_id`: optional; integer or null. Schema default: `null`. Draft revision ID; use the current revision when guarding a write.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "read_artifact",
+    "arguments": {
+      "artifact_id": 123
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `artifact`: object; required in the output schema.
+- `revision`: object; required in the output schema.
+
+The complete input and output schemas are in [read_artifact.json](../../schemas/read_artifact.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/replace_article_text.md
+
+# replace_article_text
+
+Find and replace text in article block data.text, data.code and data.caption fields.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Replacement searches data.text, data.code and data.caption. Choose replace_all and use_regex deliberately; they are not enabled by default.
+
+## Arguments
+
+- `article_id`: required; string. minimum text length: 1. Article ID returned by article creation or listing.
+- `search`: required; string. minimum text length: 1. Search text, or a list of substrings for article-block filtering.
+- `replace`: required; string. Replacement text.
+- `use_regex`: optional; boolean. Schema default: `false`. Interpret the article search expression as a regular expression.
+- `replace_all`: optional; boolean. Schema default: `true`. Replace every match when true.
+- `block_ids`: optional; array of string or null. Schema default: `null`. Limit article-text replacement to these block IDs.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "replace_article_text",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "search": "notebook",
+      "replace": "laptop",
+      "replace_all": true
+    }
+  }
+}
+```
+
+## Result
+
+Interpret the returned tool content and structured data according to the current advertised output schema.
+
+The complete input and output schemas are in [replace_article_text.json](../../schemas/replace_article_text.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/replace_range_in_artifact.md
+
+# replace_range_in_artifact
+
+Replace a range of characters in an artifact draft using its current revision ID.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+start and length describe a range in the current draft. Pass the current revision_id. A zero length inserts the replacement without deleting existing characters.
+
+## Arguments
+
+- `artifact_id`: required; integer. greater than: 0. Artifact ID returned by artifact creation or listing.
+- `revision_id`: required; integer. greater than: 0. Draft revision ID; use the current revision when guarding a write.
+- `start`: required; integer. minimum: 0. Starting character offset for an artifact range, or seasonality start month.
+- `length`: required; integer. minimum: 0. Character range length, or page extraction length control.
+- `replacement`: required; string. Text inserted into the selected artifact range.
+- `created_by`: optional; "assistant" | "user". Schema default: `"assistant"`. Revision author category.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "replace_range_in_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "revision_id": 456,
+      "start": 0,
+      "length": 0,
+      "replacement": "<!-- Updated report -->"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `revision`: object; required in the output schema.
+- `meta`: object or null; optional in the output schema.
+
+The complete input and output schemas are in [replace_range_in_artifact.json](../../schemas/replace_range_in_artifact.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/replace_substring_in_artifact.md
+
+# replace_substring_in_artifact
+
+Replace matching text in an artifact draft using its current revision ID.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Pass the current revision_id. The response metadata includes replacements_count. replace_all defaults to false.
+
+## Arguments
+
+- `artifact_id`: required; integer. greater than: 0. Artifact ID returned by artifact creation or listing.
+- `revision_id`: required; integer. greater than: 0. Draft revision ID; use the current revision when guarding a write.
+- `search`: required; string. minimum text length: 1. Search text, or a list of substrings for article-block filtering.
+- `replace`: optional; string. Schema default: `""`. Replacement text.
+- `replace_all`: optional; boolean. Schema default: `false`. Replace every match when true.
+- `case_sensitive`: optional; boolean. Schema default: `false`. Match text with case sensitivity when true.
+- `created_by`: optional; "assistant" | "user". Schema default: `"assistant"`. Revision author category.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "replace_substring_in_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "revision_id": 456,
+      "search": "SEO report",
+      "replace": "Updated SEO report"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `revision`: object; required in the output schema.
+- `meta`: object or null; optional in the output schema.
+
+The complete input and output schemas are in [replace_substring_in_artifact.json](../../schemas/replace_substring_in_artifact.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/revert_artifact.md
+
+# revert_artifact
+
+Restore the active artifact draft from a selected revision.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+to_revision_id identifies the revision to restore. revision_id can guard against concurrent changes to the active draft.
+
+## Arguments
+
+- `artifact_id`: required; integer. greater than: 0. Artifact ID returned by artifact creation or listing.
+- `to_revision_id`: required; integer. greater than: 0. Target revision ID for a comparison or restoration.
+- `revision_id`: optional; integer or null. Schema default: `null`. Draft revision ID; use the current revision when guarding a write.
+- `created_by`: optional; "assistant" | "user". Schema default: `"assistant"`. Revision author category.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "revert_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "to_revision_id": 456,
+      "revision_id": 457
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `revision`: object; required in the output schema.
+- `meta`: object or null; optional in the output schema.
+
+The complete input and output schemas are in [revert_artifact.json](../../schemas/revert_artifact.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/search_artifact.md
+
+# search_artifact
+
+Find text in an artifact revision and return match positions and a match count.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+The response metadata includes matches with start/end positions and text, and count. revision_id can select an older revision.
+
+## Arguments
+
+- `artifact_id`: required; integer. greater than: 0. Artifact ID returned by artifact creation or listing.
+- `search`: required; string. minimum text length: 1. Search text, or a list of substrings for article-block filtering.
+- `revision_id`: optional; integer or null. Schema default: `null`. Draft revision ID; use the current revision when guarding a write.
+- `case_sensitive`: optional; boolean. Schema default: `false`. Match text with case sensitivity when true.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "search_artifact",
+    "arguments": {
+      "artifact_id": 123,
+      "search": "SEO report"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `revision`: object; required in the output schema.
+- `meta`: object or null; optional in the output schema.
+
+The complete input and output schemas are in [search_artifact.json](../../schemas/search_artifact.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/set_article_content.md
+
+# set_article_content
+
+Replace an article body and remove its existing blocks.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+This replaces existing article blocks. Read the current article first. Use incremental block inserts instead of replacing a long article in a single oversized call.
+
+## Arguments
+
+- `article_id`: required; string. minimum text length: 1. Article ID returned by article creation or listing.
+- `body`: required; array of object. Structured article body content.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "set_article_content",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "body": [
+        {
+          "type": "paragraph",
+          "data": {
+            "text": "Updated guide."
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `id`: string; required in the output schema.
+- `name`: string; required in the output schema.
+- `body`: array of object or null; optional in the output schema.
+- `extraData`: object or null; optional in the output schema.
+- `dateCreated`: string or null; optional in the output schema.
+- `dateUpdated`: string or null; optional in the output schema.
+- `hasInvites`: boolean or null; optional in the output schema.
+
+The complete input and output schemas are in [set_article_content.json](../../schemas/set_article_content.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/set_artifact_persistent.md
+
+# set_artifact_persistent
+
+Enable or disable persistent storage for a finalized artifact version.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+version is a finalized version number, not a draft revision_id.
+
+## Arguments
+
+- `artifact_id`: required; integer. greater than: 0. Artifact ID returned by artifact creation or listing.
+- `version`: required; integer. greater than: 0. Finalized artifact version number.
+- `is_persistent`: required; boolean. Enable persistent storage of the finalized version.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "set_artifact_persistent",
+    "arguments": {
+      "artifact_id": 123,
+      "version": 1,
+      "is_persistent": true
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `revision`: object; required in the output schema.
+- `meta`: object or null; optional in the output schema.
+
+The complete input and output schemas are in [set_artifact_persistent.json](../../schemas/set_artifact_persistent.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/update_article_title.md
+
+# update_article_title
+
+Change the name of an article.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `article_id`: required; string. minimum text length: 1. Article ID returned by article creation or listing.
+- `name`: required; string. minimum text length: 1; maximum text length: 255. Name of the article, keyword group or project note.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "update_article_title",
+    "arguments": {
+      "article_id": "ARTICLE_ID",
+      "name": "Updated laptop buying guide"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `id`: string; required in the output schema.
+- `name`: string; required in the output schema.
+- `dateCreated`: string or null; optional in the output schema.
+- `dateUpdated`: string or null; optional in the output schema.
+- `hasInvites`: boolean or null; optional in the output schema.
+
+The complete input and output schemas are in [update_article_title.json](../../schemas/update_article_title.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/update_group_keywords.md
+
+# update_group_keywords
+
+Update the assignment of keyword IDs to a keyword group.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Arguments
+
+- `group_id`: required; integer. greater than: 0. Keyword-group ID returned by group discovery or creation.
+- `keyword_ids`: required; array of integer. minimum items: 0; maximum items: 100. Keyword IDs from project keyword discovery.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "update_group_keywords",
+    "arguments": {
+      "group_id": 456,
+      "keyword_ids": [
+        123,
+        124
+      ]
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `status`: "success" | "error"; required in the output schema.
+
+The complete input and output schemas are in [update_group_keywords.json](../../schemas/update_group_keywords.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/update_keywords_status.md
+
+# update_keywords_status
+
+Set selected project keywords to active or hold.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+At most 500 IDs per call. hold pauses a keyword; active reactivates it.
+
+## Arguments
+
+- `keyword_ids`: required; array of integer. minimum items: 1; maximum items: 500. Keyword IDs from project keyword discovery.
+- `status`: required; "hold" | "active". Target keyword status: active or hold.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "update_keywords_status",
+    "arguments": {
+      "keyword_ids": [
+        123,
+        124
+      ],
+      "status": "hold"
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `status`: "success" | "error"; required in the output schema.
+
+The complete input and output schemas are in [update_keywords_status.json](../../schemas/update_keywords_status.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/update_project_note.md
+
+# update_project_note
+
+Update selected fields of a project note and return the updated note.
+
+Operation: changes data, launches work or generates content.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Provide at least one of name, note_date or text. Omitted or null fields remain unchanged; empty text clears text. Only the note author or project owner can edit, even when other users have team read access. Use plain text without emoji. project_id is needed because the tool rereads project notes after updating.
+
+## Arguments
+
+- `note_id`: required; integer. greater than: 0. ID of the project note to update.
+- `project_id`: required; integer. greater than: 0. Project ID from project discovery.
+- `name`: optional; string or null. Schema default: `null`. minimum text length: 1; maximum text length: 200. Name of the article, keyword group or project note.
+- `note_date`: optional; string or null. Schema default: `null`. Calendar date of the project note.
+- `text`: optional; string or null. Schema default: `null`. maximum text length: 20000. Project note text.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "update_project_note",
+    "arguments": {
+      "note_id": 456,
+      "project_id": 123,
+      "text": "Updated title tags and checked the affected URLs."
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `id`: integer; required in the output schema.
+- `name`: string; required in the output schema.
+- `text`: string; required in the output schema.
+- `date`: string; required in the output schema.
+
+The complete input and output schemas are in [update_project_note.json](../../schemas/update_project_note.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/tools/validate_artifact.md
+
+# validate_artifact
+
+Validate the active artifact revision and report errors.
+
+Operation: retrieves or inspects data.
+
+Reference checked against PR-CY MCP server version 1.30.0 on 2026-10-27.
+
+## Behavior
+
+Response metadata includes is_valid and errors with line, column and message.
+
+## Arguments
+
+- `artifact_id`: required; integer. greater than: 0. Artifact ID returned by artifact creation or listing.
+
+## Example call
+
+This is an illustrative JSON-RPC message for an initialized MCP client. Replace demonstration IDs and domains with values from your own connection. The example was validated against the advertised input schema and was not executed against a project.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "validate_artifact",
+    "arguments": {
+      "artifact_id": 123
+    }
+  }
+}
+```
+
+## Result
+
+The advertised structured output has these top-level fields:
+
+- `revision`: object; required in the output schema.
+- `meta`: object or null; optional in the output schema.
+
+The complete input and output schemas are in [validate_artifact.json](../../schemas/validate_artifact.json). Behavioral checks, permissions and upstream data availability can impose additional requirements.
+
+See [Protocol](../protocol.md), [Limits and errors](../limits-and-errors.md), and the [tool index](index.md).
+
+
+---
+
+Source document: docs/workflows.md
+
+# PR-CY MCP workflows
+
+The JSON blocks below are tool argument objects. Replace demonstration domains and IDs with values returned by your own connection. These workflows describe how to combine tools; the examples were checked against interface schemas, not executed against a user's project.
+
+## Keyword research and search results
+
+Resolve the region for the search engine, then use its returned ID in the search request. `get_serp` uses `yandexLive` for Yandex search and supports a fixed `ru` search-interface language.
+
+Tool: `get_region`.
+
+```json
+{
+  "engine": "yandexLive",
+  "region": "Moscow"
+}
+```
+
+Tool: `get_serp`. Use the actual region ID returned above in place of the demonstration ID.
+
+```json
+{
+  "keyword": "buy laptop",
+  "engine": "yandexLive",
+  "device": "mobile",
+  "top": 10,
+  "region": 213
+}
+```
+
+For a first pass over competing pages, extract metadata and headings with `get_page_content.format=structure`. Fetch full Markdown only for pages that need a closer content review.
+
+Tool: `get_page_content`.
+
+```json
+{
+  "page_url": "https://example.com/laptops/",
+  "format": "structure"
+}
+```
+
+For keyword demand, batch phrases and accuracy types. The captured `get_wordstat` schema has no `engine` parameter. Use `types` and `regions`; the singular `type` and `region` inputs are legacy compatibility fields.
+
+Tool: `get_wordstat`.
+
+```json
+{
+  "keywords": "buy laptop, gaming laptop",
+  "types": ["general", "exact"],
+  "regions": [213],
+  "need_related_phrases": true,
+  "need_including_phrases": true
+}
+```
+
+`general` is broad phrase demand; `quoted` keeps the phrase word count while allowing word forms; `exact` keeps word forms without fixing word order. The numeric result is estimated monthly search demand, not traffic to a website. A null item in `regions` requests demand without a region restriction; omitting `regions` uses the current server default, Russia in the captured schema.
+
+For a one-off domain ranking check, batch phrases with `get_position`:
+
+```json
+{
+  "keywords": "buy laptop, gaming laptop",
+  "domain": "example.com",
+  "engine": "google",
+  "device": "desktop",
+  "top": 100
+}
+```
+
+## Project ranking reports
+
+Discover the project and search settings with `get_user_keywords_projects`. Use the returned `project_id` and `search_options_id` for a report. Rankings for different search engines, regions and devices are separate settings.
+
+Tool: `get_keywords_summaries`.
+
+```json
+{
+  "project_id": 123,
+  "search_options_id": 456,
+  "limit": 20,
+  "offset": 0
+}
+```
+
+Use `get_keywords_positions_history` for historical rankings. Use `check_positions` only when the task requests a fresh ranking check; it launches work and can consume check limits. If no search option is specified, it checks all active search options for the project.
+
+## Website audits
+
+Start with the current audit summary. The project must have crawler auditing configured.
+
+Tool: `get_crawler_analysis_summary`.
+
+```json
+{
+  "domain": "example.com",
+  "history": "none"
+}
+```
+
+The audit health rank at `results.health.rank` is between 0 and 1. If `is_updating` is true, the audit is still running and summary totals are incomplete. Use `get_crawler_pages` to identify the actual affected pages rather than inferring them from summary totals.
+
+Tool: `get_crawler_pages`.
+
+```json
+{
+  "domain": "example.com",
+  "duplicated_title": true,
+  "limit": 20,
+  "offset": 0
+}
+```
+
+Filters combine with AND. Issue flags operate when true; setting an issue flag to false does not select issue-free pages. Retrieve history only for the summary blocks relevant to your investigation.
+
+Tool: `get_crawler_analysis_summary`.
+
+```json
+{
+  "domain": "example.com",
+  "history": "days",
+  "history_blocks": ["health", "statusCode"]
+}
+```
+
+Use `get_changed_crawler_pages` to find changes to a single tracked field in an inclusive date range. Returned history may cover a longer period than the query; interpret each history entry using its date.
+
+```json
+{
+  "domain": "example.com",
+  "field": "title",
+  "date_from": "2026-10-01",
+  "date_to": "2026-10-20",
+  "limit": 20,
+  "offset": 0
+}
+```
+
+## Traffic and conversion reports
+
+Connect Google Search Console, Yandex Webmaster or Yandex Metrika to the relevant PR-CY project before requesting its data. Use the IDs from project and goal discovery.
+
+For search performance, select `gsc`, `webmaster` or `all` and use periods ending at least three days before the current date. In the example, October 1-10 is compared with October 11-20.
+
+Tool: `get_pages_summary`.
+
+```json
+{
+  "project_id": 123,
+  "source": "gsc",
+  "date_from": "2026-10-11",
+  "date_to": "2026-10-20",
+  "prev_date_from": "2026-10-01",
+  "prev_date_to": "2026-10-10",
+  "sort": "-impressions",
+  "limit": 20,
+  "offset": 0
+}
+```
+
+Keyword and URL filters are objects, not plain strings:
+
+```json
+{
+  "value": "/blog/",
+  "compare_type": "contains"
+}
+```
+
+Allowed comparisons are `equals`, `notEquals`, `startsWith`, `endsWith`, `contains`, `notContains` and `regex`. The default is `contains`; regex uses RE2 syntax. Do not confuse these objects with the plain-string `url_contains` crawler filter.
+
+For a Metrika question covered by a specialized report, use that report. Otherwise build a custom query with requested metric and dimension names, Metrika filter syntax and sort fields.
+
+Tool: `get_metrika_custom_query`.
+
+```json
+{
+  "project_id": 123,
+  "metrics": ["ym:s:visits", "ym:s:users"],
+  "dimensions": ["ym:s:startURL"],
+  "date_from": "2026-10-01",
+  "date_to": "2026-10-20",
+  "filters": "ym:s:trafficSource=='organic' AND ym:s:isRobot=='No'",
+  "sort": ["-ym:s:visits"],
+  "limit": 20,
+  "offset": 1
+}
+```
+
+Custom queries accept up to 20 metrics, 10 dimensions and 1,000 returned rows. Verify metric and dimension combinations against the [Yandex Metrika API reference](https://yandex.ru/dev/metrika/en/stat/attrandmetr/dim_all).
+
+## Articles and HTML artifacts
+
+Articles store structured blocks. For a long article, create the article first, then insert batches of blocks. The following is an illustrative short article creation input:
+
+Tool: `create_article`.
+
+```json
+{
+  "name": "Laptop buying guide"
+}
+```
+
+Use the returned article ID in `modify_article_blocks`. `afterBlockId=null` inserts at the beginning; for an append, use the ID of the current last block. Read blocks to obtain stable IDs before editing or moving them.
+
+```json
+{
+  "article_id": "ARTICLE_ID",
+  "operations": [
+    {
+      "action": "insert",
+      "afterBlockId": null,
+      "blocks": [
+        {
+          "type": "paragraph",
+          "data": {
+            "text": "A practical guide to choosing a laptop."
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+The operations `insert`, `modify`, `remove` and `move` run in order. An insert accepts at most 50 blocks. The block structures shown here are illustrative content objects; their internal `data` is open-ended in the advertised MCP schema.
+
+HTML artifacts store draft revisions and finalized versions. Create a small draft, read the artifact and carry its current `revision_id` into edits. Validate before finalizing; use the revision ID returned by the latest edit when finalizing.
+
+Tool: `create_artifact`.
+
+```json
+{
+  "type": "html",
+  "title": "SEO report",
+  "content": "<!doctype html><html lang=\"en\"><head><title>SEO report</title></head><body><h1>SEO report</h1></body></html>"
+}
+```
+
+Tool: `validate_artifact`.
+
+```json
+{
+  "artifact_id": 123
+}
+```
+
+Draft revision IDs and finalized version numbers are different identifiers. Use `set_artifact_persistent` with a finalized `version` number, not a draft `revision_id`.
+
+## Project events and notes
+
+Events are read-only timeline records accessed with a domain. Notes are user-created records accessed with a project ID. Event dates end exclusively; note dates end inclusively.
+
+Tool: `get_project_events`. This range includes October 1 through October 20.
+
+```json
+{
+  "domain": "example.com",
+  "date_from": "2026-10-01",
+  "date_to": "2026-10-21",
+  "limit": 20,
+  "offset": 0
+}
+```
+
+When requested, record a site change using `create_project_note`. Use plain text without emoji. After an uncertain create response, check notes for the same period before retrying because creation is not deduplicated.
+
+```json
+{
+  "project_id": 123,
+  "name": "Updated category titles",
+  "note_date": "2026-10-20",
+  "text": "Updated title tags on laptop category pages."
+}
+```

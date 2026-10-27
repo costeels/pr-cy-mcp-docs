@@ -1,0 +1,221 @@
+{
+  "name": "get_project_events",
+  "description": "Retrieve project timeline events for indexing, SSL, robots.txt, analytics and crawler-audit changes.",
+  "inputSchema": {
+    "$defs": {
+      "TimelineEventName": {
+        "enum": [
+          "crawlerPagesChanged:canonicalFromHeader",
+          "crawlerPagesChanged:canonicalFromHtml",
+          "crawlerPagesChanged:description",
+          "crawlerPagesChanged:h1Content",
+          "crawlerPagesChanged:textLength",
+          "crawlerPagesChanged:noIndexHttp",
+          "crawlerPagesChanged:noIndexMeta",
+          "crawlerPagesChanged:noIndexRobots",
+          "crawlerPagesChanged:statusCode",
+          "expiration:future",
+          "expiration:past",
+          "expiration:soon",
+          "ga:connected",
+          "ga:disconnected",
+          "googleSafeBrowsing:no",
+          "googleSafeBrowsing:yes",
+          "gsc:connected",
+          "gsc:disconnected",
+          "note:created",
+          "pageSpeedConfigureViewport:no",
+          "pageSpeedConfigureViewport:yes",
+          "roskomnadzor:domainForbidden",
+          "roskomnadzor:domainPardoned",
+          "sitemap:exist",
+          "sitemap:notExist",
+          "todo:checked",
+          "todo:unchecked",
+          "webmaster:connected",
+          "webmaster:disconnected",
+          "weekReportStats:ga",
+          "wwwRedirect:exist",
+          "wwwRedirect:notExist",
+          "yandexIndex:indexed",
+          "yandexIndex:notIndexed",
+          "yandexSafeBrowsing:no",
+          "yandexSafeBrowsing:yes",
+          "crawlerPagesChanged:title",
+          "googleIndex:indexed",
+          "googleIndex:notIndexed",
+          "metrika:connected",
+          "metrika:disconnected",
+          "robotsTxt:allowed",
+          "robotsTxt:change",
+          "robotsTxt:disallowed",
+          "robotsTxt:exist",
+          "robotsTxt:notExist",
+          "ssl:exist",
+          "ssl:expired",
+          "ssl:notExist",
+          "ssl:renewed",
+          "ssl:soon_expire",
+          "yandexSqi:decreased",
+          "yandexSqi:increased",
+          "googleGlue:glued",
+          "googleGlue:notGlued",
+          "googleNews:exist",
+          "googleNews:notExist",
+          "httpStatusCode:siteRecovered",
+          "httpStatusCode:siteSick",
+          "keywordsGroupInTop10:decreased",
+          "keywordsGroupInTop10:increased",
+          "keywordsHistoryImport:done",
+          "keywordsInTop10:decreased",
+          "keywordsInTop10:increased",
+          "llmsTxt:exist",
+          "mailruCatalog:exist",
+          "mailruCatalog:notExist",
+          "organicSummary:changed",
+          "organicTopPages:clicksDecreased",
+          "organicTopPages:clicksIncreased",
+          "webArchive:exist",
+          "webmasterProblems:added",
+          "webmasterProblems:deleted",
+          "webmasterSearchablePagesCount:decreased",
+          "webmasterSearchablePagesCount:increased",
+          "weekReportStats:metrika",
+          "yandexAgs:sanctionsImposed",
+          "yandexAgs:sanctionsRemoved",
+          "yandexCatalog:exist",
+          "yandexCatalog:notExist",
+          "yandexGlue:glued",
+          "yandexGlue:notGlued"
+        ],
+        "type": "string"
+      }
+    },
+    "properties": {
+      "domain": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "date_from": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "date_to": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "exclude_events": {
+        "anyOf": [
+          {
+            "items": {
+              "$ref": "#/$defs/TimelineEventName"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "limit": {
+        "default": 10,
+        "maximum": 500,
+        "minimum": 1,
+        "type": "integer"
+      },
+      "offset": {
+        "default": 0,
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "domain"
+    ],
+    "type": "object"
+  },
+  "outputSchema": {
+    "$defs": {
+      "TimelineEvent": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "success",
+              "fail",
+              "warning",
+              "info"
+            ],
+            "type": "string"
+          },
+          "created": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "status",
+          "created",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "events": {
+        "items": {
+          "$ref": "#/$defs/TimelineEvent"
+        },
+        "type": "array"
+      },
+      "total_events_count": {
+        "type": "integer"
+      },
+      "has_more": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "events",
+      "total_events_count",
+      "has_more"
+    ],
+    "type": "object"
+  }
+}
