@@ -53,7 +53,7 @@ The current `get_serp` interface supports `google` and `yandexLive`. Its `langua
 
 ## Context7
 
-Submit the public repository URL at [Context7 Add Library](https://context7.com/add-library). The root `context7.json` selects the English documentation. Context7 will assign the actual library ID when the repository is submitted.
+The documentation is available in [Context7](https://context7.com/costeels/pr-cy-mcp-docs), with library ID `/costeels/pr-cy-mcp-docs`. The root `context7.json` selects the English documentation.
 
 Context7 retrieves these instructions and examples. A separate PR-CY MCP connection executes the tools. For a single-file documentation source, publish the included `llms-full.txt` and submit its public URL using Context7's llms.txt source option or API.
 
